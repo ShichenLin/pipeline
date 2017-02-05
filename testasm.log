@@ -1,0 +1,61 @@
+processing file asmFiles/count_days.asm (1 of 8)
+Reading pref.tcl
+
+# 10.3b
+
+# vsim -c -do "run -all; exit;" -L altera_mf_ver -L altera_ver -L cycloneive_ver -wlf system_tb.wlf work.system_tb 
+# Start time: 16:56:28 on Feb 01,2017
+# ** Warning: (vsim-8891) All optimizations are turned off because the -novopt switch is in effect. This will cause your simulation to run very slowly. If you are using this switch to preserve visibility for Debug or PLI features please see the User's Manual section on Preserving Object Visibility with vopt.
+# //  Questa Sim-64
+# //  Version 10.3b linux_x86_64 May 29 2014
+# //
+# //  Copyright 1991-2014 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# Loading sv_std.std
+# Loading work.system_tb
+# Loading work.cpu_types_pkg
+# Loading work.system_if
+# Loading work.test
+# Loading work.system
+# Loading work.ram
+# Loading work.altsyncram_1
+# Loading work.altsyncram_99f1
+# Loading work.sld_mod_ram_rom
+# Loading work.sld_rom_sr
+# Loading altera_ver.dffeas
+# Loading cycloneive_ver.cycloneive_lcell_comb
+# Loading work.altsyncram_fta2
+# Loading work.decode_jsa_1
+# Loading work.decode_jsa
+# Loading cycloneive_ver.cycloneive_ram_block
+# Loading cycloneive_ver.cycloneive_ram_register
+# Loading cycloneive_ver.cycloneive_ram_pulse_generator
+# Loading work.singlecycle
+# Loading work.memory_control
+# Loading work.caches
+# Loading work.datapath
+# Loading work.request_unit
+# Loading work.control_unit
+# Loading work.register_file
+# Loading work.alu
+# Loading cycloneive_ver.cycloneive_jtag
+# Loading cycloneive_ver.cycloneive_io_ibuf
+# Loading cycloneive_ver.cycloneive_clkctrl
+# Loading cycloneive_ver.cycloneive_mux41
+# Loading cycloneive_ver.cycloneive_ena_reg
+# Loading cycloneive_ver.cycloneive_io_obuf
+# Loading altera_ver.PRIM_GDFF_LOW
+# run -all
+# Starting Processor.
+# Halted at 2280 time and ran for        113 cycles.
+# Starting memory dump.
+# Break key hit
+# Simulation stop requested.
+#  exit
+# End time: 16:56:36 on Feb 01,2017, Elapsed time: 0:00:08
+# Errors: 0, Warnings: 1
