@@ -18,7 +18,7 @@ interface control_unit_if;
 	pcsrc_t PCSrc;
 	logic RegWr, ExtOp; //ExtOp 0:zero 1:sign
 	logic dhit, ihit;
-	
+
 	modport cu (
 		input 	instr, equal, dhit, ihit,
 		output 	ALUSrc, ALUOp,
@@ -26,7 +26,7 @@ interface control_unit_if;
 				ExtOp, PCSrc,
 				dREN, dWEN
 	);
-	
+
 	modport tb (
 		input 	ALUSrc, ALUOp,
 				RegSel, RegWr, RegDst,
@@ -34,7 +34,7 @@ interface control_unit_if;
 				dREN, dWEN,
 		output 	instr, equal, dhit, ihit
 	);
-	
+
 endinterface
 
 `endif

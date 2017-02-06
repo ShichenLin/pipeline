@@ -13,6 +13,7 @@ package control_unit_pkg;
 		PCJr = 2'b10,
 		PCJ = 2'b11
 	} pcsrc_t;
+//removed
 	typedef enum logic [1:0] {
 		RegRD = 2'b00,
 		RegRT = 2'b01,

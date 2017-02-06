@@ -1,0 +1,1 @@
+system: alu.svo alu_if.vho cache_control_if.vho caches.svo caches_if.vho control_unit.svo control_unit_if.vho control_unit_pkg.vho cpu_ram_if.vho cpu_types_pkg.vho datapath.svo datapath_cache_if.vho memory_control.svo ram.svo register_file.svo register_file_if.vho request_unit.svo singlecycle.svo system_if.vho system.svo
