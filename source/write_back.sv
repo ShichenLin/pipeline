@@ -14,7 +14,7 @@ module write_back(
 		begin
 			R_dREN <= 0;
 			R_dWEN <= 0;
-			R_regSel <= 0;
+			R_regSel <= ALUr;
 			R_nPC <= 0;
 			R_ALUOut <= 0;
 			R_lui <= 0;

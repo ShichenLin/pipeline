@@ -2,7 +2,7 @@
 `define "MEMORY_IF_VH"
 
 `include "control_unit_pkg.vh"
-import control-unit_pkg::*:
+import control_unit_pkg::*;
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
 

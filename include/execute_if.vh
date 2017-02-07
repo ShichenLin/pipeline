@@ -15,7 +15,7 @@ interface execute_if;
    word_t nPC;
    logic dREN, dWEN, regWr;
    regsel_t regSel;
-   regbits_t regDst, rd, rs;
+   regbits_t regDst, rt, rs;
    //out
    word_t nPC_next;
    logic dREN_next, dWEN_next, regWr_next;

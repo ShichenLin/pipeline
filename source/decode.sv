@@ -19,9 +19,9 @@ module decode(
 	assign dwif.rt_next = instr[20:16];
 	assign imm = instr[15:0];
 	assign cuif.instr = instr;
-	assign shamt_next = {26'b0, instr[10:6]};
-	assign dwif.imm_next = cuif.ExtOp ? {{16{imm[15]}, imm} : {16'b0, imm};
-	assign dwif.lui_next = {imm, 16'b0}
+	assign dwif.shamt_next = {26'b0, instr[10:6]};
+	assign dwif.imm_next = cuif.ExtOp ? {{16{imm[15]}}, imm} : {16'b0, imm};
+	assign dwif.lui_next = {imm, 16'b0};
 	assign dwif.ALUOp_next = cuif.ALUOp;
 	assign dwif.ALUSrc_next = cuif.ALUSrc;
 	assign dwif.regSel_next = cuif.regSel;
@@ -36,7 +36,7 @@ module decode(
 	assign rfif.wsel = dwif.wsel;
 	assign dwif.halt = instr[31:26] == 6'b111111;
 	
-	always_ff @ (posedge CLk, negedge nRST)
+	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST || dwif.flush)
 		begin
@@ -44,6 +44,7 @@ module decode(
 			instr <= 0;
 		end
 		else if(dwif.ihit)
+		begin
 			dwif.nPC_next <= dwif.nPC;
 			instr <= dwif.instru;
 		end

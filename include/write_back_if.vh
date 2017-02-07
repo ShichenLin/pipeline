@@ -2,7 +2,7 @@
 `define "WRITE_BACK_IF_VH"
 
 `include "control_unit_pkg.vh"
-import control-unit_pkg::*:
+import control_unit_pkg::*;
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
 
@@ -19,7 +19,7 @@ interface write_back_if;
 	regbits_t wsel;
 	
 	modport wb (
-		input regWr, regSel, regDst, nPC, ALUOut, lui, dmemload, ihit, dihit, flush,
+		input regWr, regSel, regDst, nPC, ALUOut, lui, dmemload, ihit, dhit, flush,
 		output WEN, wdat, wsel
 	);
 	

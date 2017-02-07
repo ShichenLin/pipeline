@@ -22,7 +22,7 @@ module execute(
          exif.regSel_next <= '0;
          exif.regDst_next <= '0;
          exif.rtdat <= '0;
-         alusrc <= '0;
+         alusrc <= ALURT;
          rsdat <= '0;
          shamt <= '0;
          imm <= '0;
