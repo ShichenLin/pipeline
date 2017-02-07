@@ -1,5 +1,5 @@
-`ifndef "WRITE_BACK_IF_VH"
-`define "WRITE_BACK_IF_VH"
+`ifndef WRITE_BACK_IF_VH
+`define WRITE_BACK_IF_VH
 
 `include "control_unit_pkg.vh"
 import control_unit_pkg::*;

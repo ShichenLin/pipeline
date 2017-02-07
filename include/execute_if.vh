@@ -1,5 +1,5 @@
-`ifndef "EXECUTE_IF_VH"
-`define "EXECUTE_IF_VH"
+`ifndef EXECUTE_IF_VH
+`define EXECUTE_IF_VH
 
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;

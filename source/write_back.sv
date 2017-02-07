@@ -4,7 +4,6 @@ module write_back(
 	input logic CLK, nRST,
 	write_back_if.wb wbif
 );
-	logic R_dREN, R_dWEN;
 	regsel_t R_regSel;
 	word_t R_nPC, R_ALUOut, R_lui, R_dmemload;
 	
@@ -12,8 +11,6 @@ module write_back(
 	begin
 		if(~nRST || wbif.flush)
 		begin
-			R_dREN <= 0;
-			R_dWEN <= 0;
 			R_regSel <= ALUr;
 			R_nPC <= 0;
 			R_ALUOut <= 0;
@@ -22,10 +19,8 @@ module write_back(
 			wbif.WEN <= 0;
 			wbif.wsel <= 0;
 		end
-		else if(wbif.ihit)
+		else if(wbif.ihit || wbif.dhit)
 		begin
-			R_dREN <= wbif.dREN;
-			R_dWEN <= wbif.dWEN;
 			R_regSel <= wbif.regSel;
 			R_nPC <= wbif.nPC;
 			R_ALUOut <= wbif.ALUOut;

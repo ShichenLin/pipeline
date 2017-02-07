@@ -1,5 +1,5 @@
-`ifndef "MEMORY_IF_VH"
-`define "MEMORY_IF_VH"
+`ifndef MEMORY_IF_VH
+`define MEMORY_IF_VH
 
 `include "control_unit_pkg.vh"
 import control_unit_pkg::*;

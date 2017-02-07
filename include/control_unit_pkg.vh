@@ -1,5 +1,6 @@
 `ifndef CONTROL_UNIT_PKG_VH
 `define CONTROL_UNIT_PKG_VH
+
 package control_unit_pkg;
 	typedef enum logic [1:0] {
 		ALUr = 2'b00,
@@ -19,4 +20,5 @@ package control_unit_pkg;
 		Shamt = 2'b10
 	} alusrc_t;
 endpackage
+
 `endif

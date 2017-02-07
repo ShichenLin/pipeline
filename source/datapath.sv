@@ -22,7 +22,7 @@ module datapath (
 );
   	// import types
   	import cpu_types_pkg::*;
-
+    import control_unit_pkg::*;
 	// interfaces
 	fetch_if pcif();
 	decode_if deif();
@@ -37,13 +37,6 @@ module datapath (
 	memory me (CLK, nRST, meif);
 	write_back wb (CLK, nRST, wbif);
 	
-	// declarations
-	regbits_t rd, rt, rs;
-	logic [IMM_W-1:0] imm;
-	logic [SHAM_W-1:0] shamt;
-	word_t PC, nxtPC, jaddr;
-	logic nxthalt;
-	
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
 	assign dpif.dmemstore = meif.rtdat;
@@ -57,7 +50,7 @@ module datapath (
 	assign pcif.jaddr = 0;
 	assign pcif.jraddr = 0;
 	assign pcif.imm = 0;
-	assign pcif.PCSrc = 0;
+	assign pcif.PCSrc = Norm;
 	assign pcif.equal = 0;
 	assign pcif.ihit = dpif.ihit;
 	

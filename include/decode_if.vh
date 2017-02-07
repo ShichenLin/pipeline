@@ -1,5 +1,5 @@
-`ifndef "DECODE_IF_VH"
-`define "DECODE_IF_VH"
+`ifndef DECODE_IF_VH
+`define DECODE_IF_VH
 
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
@@ -29,11 +29,11 @@ interface decode_if;
    //write back result
    logic WEN;
    word_t wdat;
-   regbits_t wsel;   
+   regbits_t wsel;
    //flush
    logic flush;
    logic halt;
-   
+
    modport de (
       input nPC, ihit, instru, WEN, wdat, wsel, flush,
       output nPC_next, dWEN_next, dREN_next, regWr_next, regSel_next, regDst_next, ALUOp_next, PCSrc_next, ALUSrc_next, rdat1_next, rdat2_next, imm_next, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt

@@ -20,6 +20,11 @@ module memory(
 			meif.ALUOut_next <= 0;
 			meif.dmemload_next <= 0;
 		end
+		else if(meif.dhit)
+		begin
+			meif.dmemdREN <= 0;
+			meif.dmemdWEN <= 0;
+		end
 		else if(meif.ihit)
 		begin
 			meif.dmemdREN <= meif.dREN;
