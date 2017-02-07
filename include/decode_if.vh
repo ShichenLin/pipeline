@@ -3,8 +3,6 @@
 
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
-`include "control_unit_pkg.vh"
-import control_unit_pkg::*;
 
 interface decode_if;
    // Pass through signals
@@ -16,10 +14,10 @@ interface decode_if;
    // decode outputs
    regbits_t regDst_next, rt_next, rs_next; // Wsel
    logic dREN_next, dWEN_next, regWr_next;
-   regsel_t regSel_next;
+   logic [2:0] regSel_next;
    aluop_t ALUOp_next;
-   pcsrc_t PCSrc_next;
-   alusrc_t ALUSrc_next;
+   logic [2:0] PCSrc_next;
+   logic [2:0] ALUSrc_next;
    word_t rdat1_next;
    word_t rdat2_next;
    word_t imm_next, lui_next;
@@ -29,7 +27,7 @@ interface decode_if;
    //write back result
    logic WEN;
    word_t wdat;
-   regbits_t wsel;
+   logic [2:0] wsel;
    //flush
    logic flush;
    logic halt;

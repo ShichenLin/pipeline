@@ -5,14 +5,12 @@ module memory(
 	memory_if.me meif
 );
 	
-	logic R_dREN, R_dWEN;
-	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST || meif.flush)
 		begin
-			meif.dmemdREN <= 0;
-			meif.dmemdWEN <= 0;
+			meif.dmemREN <= 0;
+			meif.dmemWEN <= 0;
 			meif.nPC_next <= 0;
 			meif.regWr_next <= 0;
 			meif.regSel_next <= 0;
@@ -22,13 +20,13 @@ module memory(
 		end
 		else if(meif.dhit)
 		begin
-			meif.dmemdREN <= 0;
-			meif.dmemdWEN <= 0;
+			meif.dmemREN <= 0;
+			meif.dmemWEN <= 0;
 		end
 		else if(meif.ihit)
 		begin
-			meif.dmemdREN <= meif.dREN;
-			meif.dmemdWEN <= meif.dWEN;
+			meif.dmemREN <= meif.dREN;
+			meif.dmemWEN <= meif.dWEN;
 			meif.nPC_next <= meif.nPC;
 			meif.regWr_next <= meif.regWr;
 			meif.regSel_next <= meif.regSel;

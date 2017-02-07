@@ -3,8 +3,6 @@
 
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
-`include "control_unit_pkg.vh"
-import control_unit_pkg::*;
 
 interface execute_if;
    //latch control
@@ -14,19 +12,19 @@ interface execute_if;
    //in
    word_t nPC;
    logic dREN, dWEN, regWr;
-   regsel_t regSel;
+   logic [2:0] regSel;
    regbits_t regDst, rt, rs;
    //out
    word_t nPC_next;
    logic dREN_next, dWEN_next, regWr_next;
-   regsel_t regSel_next;
+   logic [2:0] regSel_next;
    regbits_t regDst_next;
 
    //input signals from decode
    word_t rdat1, rdat2, imm;
    word_t shamt;
    aluop_t ALUOp;
-   alusrc_t ALUSrc;
+   logic [2:0] ALUSrc;
    //input from Forwarding Unit
    logic srcA, srcB;
    word_t forData;

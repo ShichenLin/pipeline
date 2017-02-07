@@ -2,19 +2,17 @@
 `define CONTROL_UNIT_IF_VH
 
 `include "cpu_types_pkg.vh"
-`include "control_unit_pkg.vh"
 import cpu_types_pkg::*;
-import control_unit_pkg::*;
 
 interface control_unit_if;
 
 	word_t instr;
-	alusrc_t ALUSrc;
+	logic [1:0] ALUSrc;
 	logic dREN, dWEN;
 	aluop_t ALUOp;
-	regsel_t RegSel;
+	logic [1:0] RegSel;
 	regbits_t RegDst;
-	pcsrc_t PCSrc;
+	logic [1:0] PCSrc;
 	logic RegWr, ExtOp; //ExtOp 0:zero 1:sign
 
 	modport cu (

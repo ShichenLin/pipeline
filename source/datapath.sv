@@ -19,6 +19,9 @@ module datapath (
   	input logic CLK, nRST,
   	datapath_cache_if.dp dpif
 );
+
+	parameter PC_INIT = 0;
+	
   	// import types
   	import cpu_types_pkg::*;
 
@@ -30,7 +33,7 @@ module datapath (
 	write_back_if wbif();
 	
 	// wrappers
-	fetch pc (CLK, nRST, pcif);
+	fetch #(.PC_INIT(PC_INIT)) pc (CLK, nRST, pcif);
 	decode de (CLK, nRST, deif);
 	execute ex (CLK, nRST, exif);
 	memory me (CLK, nRST, meif);
@@ -49,7 +52,7 @@ module datapath (
 	assign pcif.jaddr = 0;
 	assign pcif.jraddr = 0;
 	assign pcif.imm = 0;
-	assign pcif.PCSrc = Norm;
+	assign pcif.PCSrc = 2'd0;
 	assign pcif.equal = 0;
 	assign pcif.ihit = dpif.ihit;
 	
@@ -91,7 +94,7 @@ module datapath (
 	assign meif.dWEN = exif.dWEN_next;
 	assign meif.regSel = exif.regSel_next;
 	assign meif.regDst = exif.regDst_next;
-	assign meif.ALUOut = exif.ALUOut;
+	assign meif.ALUOut = exif.ALUOut_next;
 	assign meif.dmemload = dpif.dmemload;
 	assign meif.dhit = dpif.dhit;
 	assign meif.ihit = dpif.ihit;

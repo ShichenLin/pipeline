@@ -13,40 +13,40 @@ module decode(
 	register_file_if rfif();
 	
 	control_unit cu (cuif);
-	register_file rf (rfif);
+	register_file rf (CLK, nRST, rfif);
 	
-	assign dwif.rs_next = instr[25:21];
-	assign dwif.rt_next = instr[20:16];
+	assign deif.rs_next = instr[25:21];
+	assign deif.rt_next = instr[20:16];
 	assign imm = instr[15:0];
 	assign cuif.instr = instr;
-	assign dwif.shamt_next = {26'b0, instr[10:6]};
-	assign dwif.imm_next = cuif.ExtOp ? {{16{imm[15]}}, imm} : {16'b0, imm};
-	assign dwif.lui_next = {imm, 16'b0};
-	assign dwif.ALUOp_next = cuif.ALUOp;
-	assign dwif.ALUSrc_next = cuif.ALUSrc;
-	assign dwif.regSel_next = cuif.regSel;
-	assign dwif.PCSrc_next = cuif.PCSrc;
-	assign dwif.rdat1_next = rfif.rdat1;
-	assign dwif.rdat2_next = rfif.rdat2;
-	assign dwif.dREN_next = cuif.dREN;
-	assign dwif.dWEN_next = cuif.dWEN;
-	assign dwif.regWr_next = cuif.RegWr;
-	assign rfif.WEN = dwif.WEN;
-	assign rfif.wdat = dwif.wdat;
-	assign rfif.wsel = dwif.wsel;
-	assign dwif.halt = instr[31:26] == 6'b111111;
+	assign deif.shamt_next = {26'b0, instr[10:6]};
+	assign deif.imm_next = cuif.ExtOp ? {{16{imm[15]}}, imm} : {16'b0, imm};
+	assign deif.lui_next = {imm, 16'b0};
+	assign deif.ALUOp_next = cuif.ALUOp;
+	assign deif.ALUSrc_next = cuif.ALUSrc;
+	assign deif.regSel_next = cuif.RegSel;
+	assign deif.PCSrc_next = cuif.PCSrc;
+	assign deif.rdat1_next = rfif.rdat1;
+	assign deif.rdat2_next = rfif.rdat2;
+	assign deif.dREN_next = cuif.dREN;
+	assign deif.dWEN_next = cuif.dWEN;
+	assign deif.regWr_next = cuif.RegWr;
+	assign rfif.WEN = deif.WEN;
+	assign rfif.wdat = deif.wdat;
+	assign rfif.wsel = deif.wsel;
+	assign deif.halt = instr[31:26] == 6'b111111;
 	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
-		if(~nRST || dwif.flush)
+		if(~nRST || deif.flush)
 		begin
-			dwif.nPC_next <= 0;
+			deif.nPC_next <= 0;
 			instr <= 0;
 		end
-		else if(dwif.ihit)
+		else if(deif.ihit)
 		begin
-			dwif.nPC_next <= dwif.nPC;
-			instr <= dwif.instru;
+			deif.nPC_next <= deif.nPC;
+			instr <= deif.instru;
 		end
 	end
 endmodule

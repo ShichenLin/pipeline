@@ -12,9 +12,9 @@ module control_unit(
 	always_comb
 	begin
 		cuif.RegWr = 0;
-		cuif.ALUSrc = ALURT;
-		cuif.RegSel = ALUr;
-		cuif.PCSrc = Norm;
+		cuif.ALUSrc = 2'd0;//rt
+		cuif.RegSel = 2'd0;//alu output
+		cuif.PCSrc = 2'd0;//normal
 		cuif.RegDst = rd;
 		cuif.ExtOp = 0;
 		cuif.dWEN = 0;
@@ -26,15 +26,15 @@ module control_unit(
 				casez(cuif.instr[5:0])
 					SLL: begin
 						cuif.ALUOp = ALU_SLL;
-						cuif.ALUSrc = Shamt;
+						cuif.ALUSrc = 2'd2;//shamt
 					end
 					SRL: begin
 						cuif.ALUOp = ALU_SRL;
-						cuif.ALUSrc = Shamt;
+						cuif.ALUSrc = 2'd2;//shamt
 					end
 					JR: begin
 						cuif.RegWr = 0;
-						cuif.PCSrc = PCJr;
+						cuif.PCSrc = 2'd1;//jr
 					end
 					ADD,
 					ADDU:
@@ -57,76 +57,76 @@ module control_unit(
 				endcase
 			end
 			J: begin
-				cuif.PCSrc = PCJ;
+				cuif.PCSrc = 2'd2;//j
 			end
 			JAL: begin
 				cuif.RegWr = 1;
-				cuif.PCSrc = PCJ;
-				cuif.RegSel = Jal;
+				cuif.PCSrc = 2'd2;//j
+				cuif.RegSel = 2'd1;//jal
 				cuif.RegDst = 5'd31;
 			end
 			BEQ: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = Bran;
+				cuif.PCSrc = 2'd3;//branch
 			end
 			BNE: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = Bran;
+				cuif.PCSrc = 2'd3;//branch
 			end
 			ADDI,
 			ADDIU: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_ADD;
 				cuif.ExtOp = 1;
 				cuif.RegDst = rt;
 			end
 			SLTI: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_SLT;
 				cuif.ExtOp = 1;
 				cuif.RegDst = rt;
 			end
 			SLTIU: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_SLTU;
 				cuif.RegDst = rt;
 			end
 			ANDI: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_AND;
 				cuif.RegDst = rt;
 			end
 			ORI: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_OR;
 				cuif.RegDst = rt;
 			end
 			XORI: begin
 				cuif.RegWr = 1;
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm;
 				cuif.ALUOp = ALU_XOR;
 				cuif.RegDst = rt;
 			end
 			LUI: begin
 				cuif.RegWr = 1;
-				cuif.RegSel = Lui;
+				cuif.RegSel = 2'd2;//lui
 				cuif.RegDst = rt;
 			end
 			LW: begin
 				cuif.RegDst = rt;
 				cuif.RegWr = 1;
-				cuif.RegSel = DLoad;
-				cuif.ALUSrc = Imm;
+				cuif.RegSel = 2'd3;//data load
+				cuif.ALUSrc = 2'd1;//imm;
 				cuif.ALUOp = ALU_ADD;
 				cuif.dREN = 1;
 			end
 			SW: begin
-				cuif.ALUSrc = Imm;
+				cuif.ALUSrc = 2'd1;//imm;
 				cuif.ALUOp = ALU_ADD;
 				cuif.dWEN = 1;
 			end

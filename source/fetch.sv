@@ -19,10 +19,10 @@ module fetch(
 	always_comb
 	begin
 		casez(pcif.PCSrc)
-			Norm:	nxtPC = PC + 4;
-			Bran:	nxtPC = PC + 4 + {{14{pcif.imm[15]}}, pcif.imm, 2'b0};
-			PCJr:	nxtPC = rfif.rdat1;
-			PCJ:	nxtPC = {PC[31:28], pcif.jaddr, 2'b0};
+			2'd0:	nxtPC = PC + 4; //normal
+			2'd3:	nxtPC = PC + 4 + {{14{pcif.imm[15]}}, pcif.imm, 2'b0}; //branch
+			2'd1:	nxtPC = pcif.jraddr; //jr
+			2'd2:	nxtPC = {PC[31:28], pcif.jaddr, 2'b0}; //j
 		endcase
 	end
 	

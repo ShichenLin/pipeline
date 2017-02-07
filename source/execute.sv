@@ -9,7 +9,7 @@ module execute(
    execute_if.ex exif
 );
 
-   alusrc_t alusrc;
+   logic [1:0] alusrc;
    word_t rsdat, shamt, imm;
    alu_if aif();
 
@@ -22,7 +22,7 @@ module execute(
          exif.regSel_next <= '0;
          exif.regDst_next <= '0;
          exif.rtdat <= '0;
-         alusrc <= ALURT;
+         alusrc <= 2'd0;//rt
          rsdat <= '0;
          shamt <= '0;
          imm <= '0;
@@ -43,21 +43,21 @@ module execute(
 
    always_comb begin
       casez(alusrc)
-         ALURT : begin
-            aif.portB = exif.rtdat;
+         2'd0: begin
+            aif.portB = exif.rtdat;//rt
          end
-         Imm : begin
-            aif.portB = imm;
+         2'd1: begin
+            aif.portB = imm;//imm
          end
-         Shamt: begin
-            aif.portB = shamt;
+         2'd2: begin
+            aif.portB = shamt;//shamt
          end
       endcase
    end
  
    assign aif.portA = rsdat;
    assign aif.ALUOP = exif.ALUOp;
-   assign exif.ALUOut = aif.portO;
+   assign exif.ALUOut_next = aif.portO;
    assign exif.equal = aif.zero;
    
    alu ALU (aif);

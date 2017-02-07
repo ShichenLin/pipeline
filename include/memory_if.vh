@@ -1,8 +1,6 @@
 `ifndef MEMORY_IF_VH
 `define MEMORY_IF_VH
 
-`include "control_unit_pkg.vh"
-import control_unit_pkg::*;
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
 
@@ -11,13 +9,13 @@ interface memory_if;
   // input
    word_t nPC;
    logic dREN, dWEN, regWr;
-   regsel_t regSel;
+   logic [2:0] regSel;
    regbits_t regDst;
    word_t ALUOut;
    //output
     word_t nPC_next;
    logic regWr_next;
-   regsel_t regSel_next;
+   logic [2:0] regSel_next;
    regbits_t regDst_next;
    word_t ALUOut_next;
    //interface with caches
