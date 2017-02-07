@@ -25,12 +25,15 @@ module decode(
 	assign deif.ALUOp_next = cuif.ALUOp;
 	assign deif.ALUSrc_next = cuif.ALUSrc;
 	assign deif.regSel_next = cuif.RegSel;
+	assign deif.regDst_next = cuif.RegDst;
 	assign deif.PCSrc_next = cuif.PCSrc;
 	assign deif.rdat1_next = rfif.rdat1;
 	assign deif.rdat2_next = rfif.rdat2;
 	assign deif.dREN_next = cuif.dREN;
 	assign deif.dWEN_next = cuif.dWEN;
 	assign deif.regWr_next = cuif.RegWr;
+	assign rfif.rsel1 = instr[25:21];
+	assign rfif.rsel2 = instr[20:16];
 	assign rfif.WEN = deif.WEN;
 	assign rfif.wdat = deif.wdat;
 	assign rfif.wsel = deif.wsel;

@@ -32,11 +32,12 @@ interface execute_if;
    word_t ALUOut_next, rtdat;
    // output to PC
    logic equal;
+   logic halt, halt_next;
 
    modport ex (
-      input flush, ihit, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2, imm, shamt, ALUOp, ALUSrc, srcA, srcB, forData, rt, rs,
+      input flush, ihit, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2, imm, shamt, ALUOp, ALUSrc, srcA, srcB, forData, rt, rs, halt,
       output nPC_next, dREN_next, dWEN_next, regWr_next, regSel_next,
-     regDst_next, ALUOut_next, equal, rtdat
+     regDst_next, ALUOut_next, equal, rtdat, halt_next
    );
 
 endinterface

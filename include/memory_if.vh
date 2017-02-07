@@ -28,10 +28,10 @@ interface memory_if;
    //output to next state
    word_t dmemload_next;
    //latch control signals
-   logic flush, ihit;
+   logic flush, ihit, halt;
    
    modport me (
-      input nPC, regWr, dREN, dWEN, regSel, regDst, ALUOut, dmemload, flush, ihit, dhit, rtdat,
+      input nPC, regWr, dREN, dWEN, regSel, regDst, ALUOut, dmemload, flush, ihit, dhit, rtdat, halt,
       output nPC_next, regWr_next, regSel_next, regDst_next, ALUOut_next,
              dmemload_next, dmemREN, dmemWEN, dmemaddr, dmemstore
    );
