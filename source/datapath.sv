@@ -10,11 +10,11 @@
 `include "datapath_cache_if.vh"
 
 // alu op, mips op, and instruction type
-`include "cpu_types_pkg.vh"
-`include "alu_if.vh"
-`include "register_file_if.vh"
-`include "control_unit_if.vh"
-`include  "request_unit_if.vh"
+`include "fetch_if.vh"
+`include "decode_if.vh"
+`include "execute_if.vh"
+`include "memory_if.vh"
+`include  "write_back_if.vh"
 
 module datapath (
   	input logic CLK, nRST,

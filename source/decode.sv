@@ -1,6 +1,7 @@
-`include "decode_write_back_if.vh"
+`include "decode_if.vh"
+`include "control_unit_if.vh"
 
-module decode_write_back(
+module decode(
 	input logic CLK, nRST,
 	decode_if.de deif
 );
