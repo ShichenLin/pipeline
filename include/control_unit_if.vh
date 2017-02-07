@@ -13,7 +13,7 @@ interface control_unit_if;
 	logic dREN, dWEN;
 	aluop_t ALUOp;
 	regsel_t RegSel;
-	regbit_t RegDst;
+	regbits_t RegDst;
 	pcsrc_t PCSrc;
 	logic RegWr, ExtOp; //ExtOp 0:zero 1:sign
 
