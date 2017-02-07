@@ -19,13 +19,14 @@ module write_back(
 			wbif.WEN <= 0;
 			wbif.wsel <= 0;
 		end
-		else if(wbif.ihit || wbif.dhit)
+		else if(wbif.dhit)
+			R_dmemload <= wbif.dmemload;
+		else if(wbif.ihit)
 		begin
 			R_regSel <= wbif.regSel;
 			R_nPC <= wbif.nPC;
 			R_ALUOut <= wbif.ALUOut;
-			R_lui <= wbif.lui;
-			R_dmemload <= wbif.dmemload;
+			R_lui <= wbif.lui;			
 			wbif.WEN <= wbif.regWr;
 			wbif.wsel <= wbif.regDst;
 		end

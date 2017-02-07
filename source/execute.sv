@@ -22,6 +22,7 @@ module execute(
          exif.regSel_next <= '0;
          exif.regDst_next <= '0;
          exif.rtdat <= '0;
+         exif.halt_next <= '0;
          alusrc <= 2'd0;//rt
          rsdat <= '0;
          shamt <= '0;
@@ -34,6 +35,7 @@ module execute(
          exif.regSel_next <= exif.regSel;
          exif.regDst_next <= exif.regDst;
          exif.rtdat <= exif.rdat2;
+         exif.halt_next <= exif.halt;
          alusrc <= exif.ALUSrc;
          rsdat <= exif.rdat1;
          shamt <= exif.shamt;

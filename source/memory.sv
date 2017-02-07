@@ -16,11 +16,10 @@ module memory(
 			meif.regSel_next <= 0;
 			meif.regDst_next <= 0;
 			meif.ALUOut_next <= 0;
-			meif.dmemload_next <= 0;
+			meif.halt_next <= 0;
 		end
 		else if(meif.dhit)
 		begin
-			meif.dmemload_next <= meif.dmemload;
 			meif.dmemREN <= 0;
 			meif.dmemWEN <= 0;
 		end
@@ -33,6 +32,7 @@ module memory(
 			meif.regSel_next <= meif.regSel;
 			meif.regDst_next <= meif.regDst;
 			meif.ALUOut_next <= meif.ALUOut;
+			meif.halt_next <= meif.halt;
 		end
 	end
 endmodule

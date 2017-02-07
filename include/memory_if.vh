@@ -21,19 +21,17 @@ interface memory_if;
    //interface with caches
    //output
    logic dmemREN, dmemWEN;
-   word_t dmemaddr, dmemstore;
+   word_t dmemstore;
    //input
-   word_t dmemload, rtdat;
+   word_t rtdat;
    logic dhit;
-   //output to next state
-   word_t dmemload_next;
    //latch control signals
-   logic flush, ihit, halt;
+   logic flush, ihit, halt, halt_next;
    
    modport me (
-      input nPC, regWr, dREN, dWEN, regSel, regDst, ALUOut, dmemload, flush, ihit, dhit, rtdat, halt,
+      input nPC, regWr, dREN, dWEN, regSel, regDst, ALUOut, flush, ihit, dhit, rtdat, halt,
       output nPC_next, regWr_next, regSel_next, regDst_next, ALUOut_next,
-             dmemload_next, dmemREN, dmemWEN, dmemaddr, dmemstore
+             dmemREN, dmemWEN, dmemstore, halt_next
    );
 
 endinterface
