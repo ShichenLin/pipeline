@@ -9,7 +9,6 @@
 // data path interface
 `include "datapath_cache_if.vh"
 
-// alu op, mips op, and instruction type
 `include "fetch_if.vh"
 `include "decode_if.vh"
 `include "execute_if.vh"
@@ -22,7 +21,7 @@ module datapath (
 );
   	// import types
   	import cpu_types_pkg::*;
-    import control_unit_pkg::*;
+
 	// interfaces
 	fetch_if pcif();
 	decode_if deif();

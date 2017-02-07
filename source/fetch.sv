@@ -12,7 +12,7 @@ module fetch(
 	begin
 		if(~nRST)
 			PC <= PC_INIT;
-		else
+		else if(pcif.ihit)
 			PC <= nxtPC;
 	end
 	
