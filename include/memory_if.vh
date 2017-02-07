@@ -1,8 +1,11 @@
 `ifndef "MEMORY_IF_VH"
 `define "MEMORY_IF_VH"
 
+`include "control_unit_pkg.vh"
+import control-unit_pkg::*:
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
+
 interface memory_if;
    //pass throught signals
   // input
@@ -27,7 +30,7 @@ interface memory_if;
    word_t dmemload_next;
    //latch control signals
    logic flush, ihit;
-   modport ex (
+   modport me (
       input nPC, regWr, regSel, regDst, ALUOut, dmemload, flush, ihit, dhit,
       output nPC_next, regWr_next, regSel_next, regDst_next, ALUOut_next,
              dmemload_next

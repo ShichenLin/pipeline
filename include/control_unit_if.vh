@@ -9,18 +9,16 @@ import control_unit_pkg::*;
 interface control_unit_if;
 
 	word_t instr;
-	logic equal;
 	alusrc_t ALUSrc;
 	logic dREN, dWEN;
 	aluop_t ALUOp;
 	regsel_t RegSel;
-	regdst_t RegDst;
+	regbit_t RegDst;
 	pcsrc_t PCSrc;
 	logic RegWr, ExtOp; //ExtOp 0:zero 1:sign
-	logic dhit, ihit;
 
 	modport cu (
-		input 	instr, equal, dhit, ihit,
+		input 	instr,
 		output 	ALUSrc, ALUOp,
 				RegSel, RegWr, RegDst,
 				ExtOp, PCSrc,
@@ -32,7 +30,7 @@ interface control_unit_if;
 				RegSel, RegWr, RegDst,
 				ExtOp, PCSrc,
 				dREN, dWEN,
-		output 	instr, equal, dhit, ihit
+		output 	instr
 	);
 
 endinterface

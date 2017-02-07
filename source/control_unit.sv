@@ -3,6 +3,11 @@
 module control_unit(
 	control_unit_if.cu cuif
 );
+	regbit_t rs, rt, rd;
+	
+	assign rs = cuif.instr[25:21];
+	assign rt = cuif.instr[20:16];
+	assign rd = cuif.instr[15:11];
 	
 	always_comb
 	begin
@@ -10,14 +15,14 @@ module control_unit(
 		cuif.ALUSrc = ALURT;
 		cuif.RegSel = ALUr;
 		cuif.PCSrc = Norm;
-		cuif.RegDst = RegRD;
+		cuif.RegDst = rd;
 		cuif.ExtOp = 0;
 		cuif.dWEN = 0;
 		cuif.dREN = 0;
 		cuif.ALUOp = ALU_ADD;
 		casez(cuif.instr[31:26])
 			RTYPE: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				casez(cuif.instr[5:0])
 					SLL: begin
 						cuif.ALUOp = ALU_SLL;
@@ -55,66 +60,66 @@ module control_unit(
 				cuif.PCSrc = PCJ;
 			end
 			JAL: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.PCSrc = PCJ;
 				cuif.RegSel = Jal;
-				cuif.RegDst = RegJal;
+				cuif.RegDst = 5'd31;
 			end
 			BEQ: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = cuif.equal ? Bran : Norm;
+				cuif.PCSrc = Bran;
 			end
 			BNE: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = cuif.equal ? Norm : Bran;
+				cuif.PCSrc = Bran;
 			end
 			ADDI,
 			ADDIU: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_ADD;
 				cuif.ExtOp = 1;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			SLTI: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_SLT;
 				cuif.ExtOp = 1;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			SLTIU: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_SLTU;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			ANDI: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_AND;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			ORI: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_OR;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			XORI: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_XOR;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			LUI: begin
-				cuif.RegWr = cuif.ihit;
+				cuif.RegWr = 1;
 				cuif.RegSel = Lui;
-				cuif.RegDst = RegRT;
+				cuif.RegDst = rt;
 			end
 			LW: begin
-				cuif.RegDst = RegRT;
-				cuif.RegWr = cuif.dhit;
+				cuif.RegDst = rt;
+				cuif.RegWr = 1;
 				cuif.RegSel = DLoad;
 				cuif.ALUSrc = Imm;
 				cuif.ALUOp = ALU_ADD;

@@ -3,6 +3,8 @@
 
 `include "cpu_types_pkg.vh"
 import cpu_types_pkg::*;
+`include "control_unit_pkg.vh"
+import control-unit_pkg::*:
 
 interface decode_write_back_if;
    // Pass through signals
@@ -31,19 +33,21 @@ interface decode_write_back_if;
    word_t dmemload;
    word_t nPC;
    word_t ALUOut;
+   wort_t lui, lui_next;
+   
    //flush
    logic flush;
    modport dw (
-      input nPCIn, ihit, instru, regWr, regDst, regSel, dmemload, nPC, ALUOut,
+      input nPCIn, ihit, instru, regWr, regDst, regSel, dmemload, nPC, ALUOut, lui,
       flush,
       output nPC_next, regSel_next, ALUOp_next, PCSrc_next, ALUSrc_next,
-      rdat1_next, rdat2_next, imm_next, PCSrc, shamt_next
+      rdat1_next, rdat2_next, imm_next, PCSrc, shamt_next, lui_next
    );
 
    modport dp (
      input nPC_next, regSel_next, ALUOp_next, PCSrc_next, ALUSrc_next,
-     rdat1_next, rdat2_next, imm_next, PCSrc, shamt_next,
-     output nPCIn, ihit, instru, regWr, regDst, regSel, dmemload, nPC, ALUOut,
+     rdat1_next, rdat2_next, imm_next, PCSrc, shamt_next, lui_next
+     output nPCIn, ihit, instru, regWr, regDst, regSel, dmemload, nPC, ALUOut, lui,
      flush
    );
 
