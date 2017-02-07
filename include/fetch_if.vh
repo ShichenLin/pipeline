@@ -18,10 +18,5 @@ interface fetch_if;
       output imemaddr, nPC
    );
 
-   modport dp (
-      input imemaddr, nPC,
-      output jaddr, jraddr, imm, PCSrc, equal, ihit
-   );
-
 endinterface
 `endif

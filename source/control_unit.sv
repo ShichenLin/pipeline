@@ -3,7 +3,7 @@
 module control_unit(
 	control_unit_if.cu cuif
 );
-	regbit_t rs, rt, rd;
+	regbits_t rs, rt, rd;
 	
 	assign rs = cuif.instr[25:21];
 	assign rt = cuif.instr[20:16];

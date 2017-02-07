@@ -23,24 +23,19 @@ module datapath (
   	// import types
   	import cpu_types_pkg::*;
 
-  	// pc init
-  	parameter PC_INIT = 0;
-
 	// interfaces
-	alu_if aluif();
-	register_file_if rfif();
-	control_unit_if cuif();
-	request_unit_if ruif();
+	fetch_if pcif();
+	decode_if deif();
+	execute_if exif();
+	memory_if meif();
+	write_back_if wbif();
 	
 	// wrappers
-	`ifndef mapped
-		alu ALU (aluif);
-		register_file rf (CLK, nRST, rfif);
-		control_unit cu (cuif);
-		request_unit ru (CLK, nRST, ruif);
-	`else
-		
-	`endif
+	fetch pc (CLK, nRST, pcif);
+	decode de (CLK, nRST, deif);
+	execute ex (CLK, nRST, exif);
+	memory me (CLK, nRST, meif);
+	write_back wb (CLK, nRST, wbif);
 	
 	// declarations
 	regbits_t rd, rt, rs;
@@ -49,91 +44,76 @@ module datapath (
 	word_t PC, nxtPC, jaddr;
 	logic nxthalt;
 	
-	//variables assignments
-	assign imm = dpif.imemload[15:0];
-	assign jaddr = {dpif.imemload[25:0], 2'b0};
-	assign shamt = dpif.imemload[10:6];
-	assign rd = dpif.imemload[15:11];
-	assign rt = dpif.imemload[20:16];
-	assign rs = dpif.imemload[25:21];
+	//datapath
+	assign dpif.imemaddr = pcif.imemaddr;
+	assign dpif.dmemstore = meif.rtdat;
+	assign dpif.dmemaddr = meif.ALUOut_next;
+	assign dpif.imemREN = ~deif.halt;
+	assign dpif.dmemREN = meif.dmemREN;
+	assign dpif.dmemWEN = meif.dmemWEN;
+	assign dpif.halt = deif.halt;
 	
-	//register_file assignments
-	assign rfif.rsel1 = rs;
-	assign rfif.rsel2 = rt;
-	assign rfif.WEN = cuif.RegWr;
-	assign aluif.portA = rfif.rdat1;
-	assign dpif.dmemstore = rfif.rdat2;
+	//fetch
+	assign pcif.jaddr = 0;
+	assign pcif.jraddr = 0;
+	assign pcif.imm = 0;
+	assign pcif.PCSrc = 0;
+	assign pcif.equal = 0;
+	assign pcif.ihit = dpif.ihit;
 	
-	//ALU assignments
-	assign dpif.dmemaddr = aluif.portO;
-	assign aluif.ALUOP = cuif.ALUOp;
-	assign cuif.equal = aluif.zero;
+	//decode
+	assign deif.instru = dpif.imemload;
+	assign deif.nPC = pcif.nPC;
+	assign deif.ihit = dpif.ihit;
+	assign deif.WEN = wbif.WEN;
+	assign deif.wdat = wbif.wdat;
+	assign deif.wsel = wbif.wsel;
+	assign deif.flush = 0;
 	
-	//control_unit assignemnts
-	assign cuif.instr = dpif.imemload;
-	assign cuif.dhit = dpif.dhit;
-	assign cuif.ihit = dpif.ihit;
+	//execute
+	assign exif.flush = 0;
+	assign exif.ihit = dpif.ihit;
+	assign exif.nPC = deif.nPC_next;
+	assign exif.dWEN = deif.dWEN_next;
+	assign exif.dREN = deif.dREN_next;
+	assign exif.regWr = deif.regWr_next;
+	assign exif.regSel = deif.regSel_next;
+	assign exif.regDst = deif.regDst_next;
+	assign exif.ALUOp = deif.ALUOp_next;
+	assign exif.ALUSrc = deif.ALUSrc_next;
+	assign exif.rdat1 = deif.rdat1_next;
+	assign exif.rdat2 = deif.rdat2_next;
+	assign exif.imm = deif.imm_next;
+	assign exif.shamt = deif.shamt_next;
+	assign exif.rt = deif.rt_next;
+	assign exif.rs = deif.rs_next;
+	//forwarding
+	assign exif.forData = 0;
+	assign exif.srcA = 0;
+	assign exif.srcB = 0;
 	
-	//request_unit assignments
-	assign ruif.dREN_c = dpif.halt ? 0 : cuif.dREN;
-	assign ruif.dWEN_c = dpif.halt? 0 : cuif.dWEN;
-	assign dpif.dmemREN = ruif.dREN_r;
-	assign dpif.dmemWEN = ruif.dWEN_r;
-	assign ruif.ihit = dpif.ihit;
-	assign ruif.dhit = dpif.dhit;
+	//memory
+	assign meif.nPC = exif.nPC_next;
+	assign meif.regWr = exif.regWr_next;
+	assign meif.dREN = exif.dREN_next;
+	assign meif.dWEN = exif.dWEN_next;
+	assign meif.regSel = exif.regSel_next;
+	assign meif.regDst = exif.regDst_next;
+	assign meif.ALUOut = exif.ALUOut;
+	assign meif.dmemload = dpif.dmemload;
+	assign meif.dhit = dpif.dhit;
+	assign meif.ihit = dpif.ihit;
+	assign meif.flush = 0;
 	
-	//datapath_assignments
-	assign dpif.imemREN = ~dpif.halt;
-	assign dpif.imemaddr = PC;
-	
-	//others
-	assign dpif.datomic = 0;
-	assign nxthalt = dpif.imemload[31:26] == 6'b111111;
-	
-	always_ff @ (posedge CLK, negedge nRST)
-	begin
-		if(~nRST)
-		begin
-			PC <= '0;
-			dpif.halt <= 0;
-		end
-		else if(dpif.ihit)
-		begin
-			PC <= nxtPC;
-			dpif.halt <= nxthalt;
-		end
-		else begin
-			PC <= PC;
-			dpif.halt <= dpif.halt;
-		end
-	end
-	
-	always_comb
-	begin
-		casez(cuif.RegSel)
-			ALUr:	rfif.wdat = aluif.portO;
-			DLoad:	rfif.wdat = dpif.dmemload;
-			Jal:	rfif.wdat = PC + 4;
-			Lui:	rfif.wdat = {imm, 16'b0};
-		endcase
-		casez(cuif.PCSrc)
-			Norm:	nxtPC = PC + 4;
-			Bran:	nxtPC = PC + 4 + {{14{imm[15]}}, imm, 2'b0};
-			PCJr:	nxtPC = rfif.rdat1;
-			PCJ:	nxtPC = {PC[31:28], jaddr};
-		endcase
-		casez(cuif.RegDst)
-			RegRD:	rfif.wsel = rd;
-			RegRT:	rfif.wsel = rt;
-			RegJal: rfif.wsel = 5'd31;
-			default:rfif.wsel = rd;
-		endcase
-		casez(cuif.ALUSrc)
-			ALURT:	aluif.portB = rfif.rdat2;
-			Imm:	aluif.portB = cuif.ExtOp ? {{16{imm[15]}}, imm} : {16'b0, imm};
-			Shamt:	aluif.portB = {27'b0, shamt};
-			default:aluif.portB = rfif.rdat2;
-		endcase
-	end
+	//write_back
+	assign wbif.nPC = meif.nPC_next;
+	assign wbif.regWr = meif.regWr_next;
+	assign wbif.regSel = meif.regSel_next;
+	assign wbif.regDst = meif.regDst_next;
+	assign wbif.ALUOut = meif.ALUOut_next;
+	assign wbif.dmemload = meif.dmemload;
+	assign wbif.dhit = dpif.dhit;
+	assign wbif.ihit = dpif.ihit;
+	assign wbif.flush = 0;
 	
 endmodule

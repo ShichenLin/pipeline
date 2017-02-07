@@ -8,22 +8,24 @@ module execute(
    logic nRST,
    execute_if.ex exif
 );
-   word_t portb;
+
+   alusrc_t alusrc;
+   word_t rsdat, shamt, imm;
+   alu_if aif();
+
    always_ff@(posedge CLK, negedge nRST) begin
-      if (nRST == 1'b0) begin
+      if (~nRST || exif.flush) begin
          exif.nPC_next <= '0;
          exif.dREN_next <= '0;
          exif.dWEN_next <= '0;
          exif.regWr_next <= '0;
          exif.regSel_next <= '0;
          exif.regDst_next <= '0;
-      end else if (exif.flush == 1'b1) begin
-         exif.nPC_next <= '0;
-         exif.dREN_next <= '0;
-         exif.dWEN_next <= '0;
-         exif.regWr_next <= '0;
-         exif.regSel_next <= '0;
-         exif.regDst_next <= '0;
+         exif.rtdat <= '0;
+         alusrc <= '0;
+         rsdat <= '0;
+         shamt <= '0;
+         imm <= '0;
       end else if (exif.ihit == 1'b1) begin
          exif.nPC_next <= exif.nPC;
          exif.dREN_next <= exif.dREN;
@@ -31,28 +33,32 @@ module execute(
          exif.regWr_next <= exif.regWr;
          exif.regSel_next <= exif.regSel;
          exif.regDst_next <= exif.regDst;
+         exif.rtdat <= exif.rdat2;
+         alusrc <= exif.ALUSrc;
+         rsdat <= exif.rdat1;
+         shamt <= exif.shamt;
+         imm <= exif.imm;
       end
    end
 
    always_comb begin
-      casez(exif.ALUSrc)
+      casez(alusrc)
          ALURT : begin
-            portb = exif.rdat2;
+            aif.portB = exif.rtdat;
          end
          Imm : begin
-            portb = exif.imm;
+            aif.portB = imm;
          end
          Shamt: begin
-             portb = {25'b0, exif.Shamt};
+            aif.portB = shamt;
          end
       endcase
    end
-   alu_if aif();
-
-   assign aif.portA = exif.rdat1;
-   assign aif.portB = portb;
+ 
+   assign aif.portA = rsdat;
    assign aif.ALUOP = exif.ALUOp;
    assign exif.ALUOut = aif.portO;
    assign exif.equal = aif.zero;
+   
    alu ALU (aif);
 endmodule
