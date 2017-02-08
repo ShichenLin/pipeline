@@ -6,7 +6,7 @@ import cpu_types_pkg::*;
 
 interface write_back_if;
 	//inputs
-	logic ihit, dhit, flush;
+	logic wben;
 	logic regWr;
 	logic [2:0] regSel;
 	regbits_t regDst;
@@ -17,7 +17,7 @@ interface write_back_if;
 	regbits_t wsel;
 	
 	modport wb (
-		input regWr, regSel, regDst, nPC, ALUOut, lui, dmemload, ihit, dhit, flush,
+		input regWr, regSel, regDst, nPC, ALUOut, lui, dmemload, wben,
 		output WEN, wdat, wsel
 	);
 	

@@ -11,10 +11,10 @@ module decode(
 	logic [15:0] imm;
 	control_unit_if cuif();
 	register_file_if rfif();
-	
+
 	control_unit cu (cuif);
 	register_file rf (CLK, nRST, rfif);
-	
+
 	assign deif.rs_next = instr[25:21];
 	assign deif.rt_next = instr[20:16];
 	assign imm = instr[15:0];
@@ -38,15 +38,19 @@ module decode(
 	assign rfif.wdat = deif.wdat;
 	assign rfif.wsel = deif.wsel;
 	assign deif.halt = instr[31:26] == 6'b111111;
-	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
-		if(~nRST || deif.flush)
+		if(~nRST)
 		begin
 			deif.nPC_next <= 0;
 			instr <= 0;
 		end
-		else if(deif.ihit)
+		else if(deif.flush)
+		begin
+			deif.nPC_next <= 0;
+			instr <= 0;
+		end
+		else if(deif.deen)
 		begin
 			deif.nPC_next <= deif.nPC;
 			instr <= deif.instru;

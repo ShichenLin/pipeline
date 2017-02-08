@@ -31,7 +31,7 @@ module memory_control (
 	assign	ccif.ramstore = ccif.dstore;
 	assign	ccif.ramaddr = (ccif.dREN || ccif.dWEN) ? ccif.daddr : ccif.iaddr;
 		
-		//multicore signals
+	//multicore signals
 	assign	ccif.ccinv = 0;
 	assign	ccif.ccwait = 0;
 	assign	ccif.ccsnoopaddr = 0;

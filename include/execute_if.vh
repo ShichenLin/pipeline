@@ -7,7 +7,7 @@ import cpu_types_pkg::*;
 interface execute_if;
    //latch control
    logic flush;
-   logic ihit;
+   logic exen;
    //pass through signals
    //in
    word_t nPC;
@@ -29,15 +29,18 @@ interface execute_if;
    logic srcA, srcB;
    word_t forData;
    //output to mem state
-   word_t ALUOut_next, rtdat;
+   word_t ALUOut_next;
    // output to PC
    logic equal;
    logic halt, halt_next;
-
+   word_t dmemstore_next;
+   word_t lui, lui_next;
+   
    modport ex (
-      input flush, ihit, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2, imm, shamt, ALUOp, ALUSrc, srcA, srcB, forData, rt, rs, halt,
+      input flush, exen, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2,
+imm, shamt, ALUOp, ALUSrc, srcA, srcB, forData, rt, rs, halt, lui,
       output nPC_next, dREN_next, dWEN_next, regWr_next, regSel_next,
-     regDst_next, ALUOut_next, equal, rtdat, halt_next
+     regDst_next, ALUOut_next, equal, halt_next, dmemstore_next, lui_next
    );
 
 endinterface

@@ -9,7 +9,7 @@ module write_back(
 	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
-		if(~nRST || wbif.flush)
+		if(~nRST)
 		begin
 			R_regSel <= 2'd0;//alu output
 			R_nPC <= 0;
@@ -19,10 +19,12 @@ module write_back(
 			wbif.WEN <= 0;
 			wbif.wsel <= 0;
 		end
-		else if(wbif.dhit)
-			R_dmemload <= wbif.dmemload;
-		else if(wbif.ihit)
+		else if(wbif.wben)
 		begin
+			R_dmemload <= wbif.dmemload;
+			R_regSel <= wbif.regSel;
+			wbif.WEN <= wbif.regWr;
+			wbif.wsel <= wbif.regDst;
 			R_regSel <= wbif.regSel;
 			R_nPC <= wbif.nPC;
 			R_ALUOut <= wbif.ALUOut;
@@ -34,7 +36,7 @@ module write_back(
 	
 	always_comb
 	begin
-		casez(wbif.regSel)
+		casez(R_regSel)
 			2'd0: wbif.wdat = R_ALUOut;//alu output
 			2'd3: wbif.wdat = R_dmemload;//data load
 			2'd1: wbif.wdat = R_nPC;//jal
