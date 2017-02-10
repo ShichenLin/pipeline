@@ -2,6 +2,8 @@
 
 module memory(
 	input logic CLK, nRST,
+  input word_t instru_me,
+  output word_t instru_me_next,
 	memory_if.me meif
 );
 
@@ -17,8 +19,9 @@ module memory(
 			meif.regDst_next <= 0;
 			meif.ALUOut_next <= 0;
 			meif.halt_next <= 0;
-      		meif.dmemstore_next <= 0;
-      		meif.lui_next <= 0;
+      meif.dmemstore_next <= 0;
+      meif.lui_next <= 0;
+      instru_me_next <= 0;
 		end
 		else if(meif.flush)
 		begin
@@ -30,8 +33,9 @@ module memory(
 			meif.regDst_next <= 0;
 			meif.ALUOut_next <= 0;
 			meif.halt_next <= 0;
-      		meif.dmemstore_next <= 0;
-      		meif.lui_next <= 0;
+		 meif.dmemstore_next <= 0;
+		 meif.lui_next <= 0;
+     instru_me_next <= 0;
 		end
 		else if(meif.meen)
 		begin
@@ -45,8 +49,9 @@ module memory(
 			meif.regDst_next <= meif.regDst;
 			meif.ALUOut_next <= meif.ALUOut;
 			meif.halt_next <= meif.halt;
-     		meif.dmemstore_next <= meif.dmemstore;
-      		meif.lui_next <= meif.lui;
+      meif.dmemstore_next <= meif.dmemstore;
+      meif.lui_next <= meif.lui;
+      instru_me_next <= instru_me;
 		end
 	end
 endmodule

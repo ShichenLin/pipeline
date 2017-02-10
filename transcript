@@ -1,0 +1,74 @@
+# vsim -c -do "run -all; exit;" -L altera_mf_ver -L altera_ver -L cycloneive_ver -wlf system_tb.wlf work.system_tb 
+# Start time: 00:06:42 on Feb 10,2017
+# ** Warning: (vsim-8891) All optimizations are turned off because the -novopt switch is in effect. This will cause your simulation to run very slowly. If you are using this switch to preserve visibility for Debug or PLI features please see the User's Manual section on Preserving Object Visibility with vopt.
+# //  Questa Sim-64
+# //  Version 10.3b linux_x86_64 May 29 2014
+# //
+# //  Copyright 1991-2014 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# Loading sv_std.std
+# Loading work.system_tb
+# Loading work.cpu_types_pkg
+# Loading work.system_if
+# Loading work.test
+# Loading work.system
+# Loading work.cpu_ram_if
+# Loading work.pipeline
+# Loading work.datapath_cache_if
+# Loading work.caches_if
+# Loading work.cache_control_if
+# Loading work.datapath_sv_unit
+# Loading work.datapath
+# Loading work.hazard_unit_if_vh_unit
+# Loading work.hazard_unit_if
+# Loading work.fetch_if_vh_unit
+# Loading work.fetch_if
+# Loading work.decode_if_vh_unit
+# Loading work.decode_if
+# Loading work.execute_if_vh_unit
+# Loading work.execute_if
+# Loading work.memory_if_vh_unit
+# Loading work.memory_if
+# Loading work.write_back_if_vh_unit
+# Loading work.write_back_if
+# Loading work.hazard_unit_sv_unit
+# Loading work.hazard_unit
+# Loading work.fetch_sv_unit
+# Loading work.fetch
+# Loading work.decode_sv_unit
+# Loading work.decode
+# Loading work.control_unit_if
+# Loading work.register_file_if
+# Loading work.control_unit_sv_unit
+# Loading work.control_unit
+# Loading work.register_file
+# Loading work.execute_sv_unit
+# Loading work.execute
+# Loading work.alu_if
+# Loading work.alu_sv_unit
+# Loading work.alu
+# Loading work.memory_sv_unit
+# Loading work.memory
+# Loading work.write_back_sv_unit
+# Loading work.write_back
+# Loading work.caches
+# Loading work.memory_control
+# Loading work.ram
+# Loading altera_mf_ver.altsyncram
+# Loading altera_mf_ver.altsyncram_body
+# Loading altera_mf_ver.ALTERA_DEVICE_FAMILIES
+# Loading altera_mf_ver.ALTERA_MF_MEMORY_INITIALIZATION
+# run -all
+# ERROR: cannot read meminit.hex.
+# Starting Processor.
+# Break key hit
+# Break in Module cache_control_if at include/cache_control_if.vh line 107
+# Stopped at include/cache_control_if.vh line 107
+#  exit
+# End time: 00:06:46 on Feb 10,2017, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 1

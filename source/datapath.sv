@@ -33,14 +33,19 @@ module datapath (
 	execute_if exif();
 	memory_if meif();
 	write_back_if wbif();
-
+// instrution flow
+  word_t instr, instru_ex, instru_ex_next,
+  instru_me, instru_me_next, instru_wb, instru_wb_next;
+  assign instru_ex = instr;
+  assign instru_me = instru_ex_next;
+  assign instru_wb = instru_me_next;
 	// wrappers
 	hazard_unit hu (huif);
 	fetch #(.PC_INIT(PC_INIT)) pc (CLK, nRST, pcif);
-	decode de (CLK, nRST, deif);
-	execute ex (CLK, nRST, exif);
-	memory me (CLK, nRST, meif);
-	write_back wb (CLK, nRST, wbif);
+	decode de (CLK, nRST, instr, deif);
+	execute ex (CLK, nRST, instru_ex, instru_ex_next, exif);
+	memory me (CLK, nRST, instru_me, instru_me_next, meif);
+	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
 
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
@@ -48,14 +53,14 @@ module datapath (
 	assign dpif.imemREN = ~meif.halt_next;
 	assign dpif.dmemREN = meif.dmemREN;
 	assign dpif.dmemWEN = meif.dmemWEN;
-  	assign dpif.dmemstore = meif.dmemstore_next;
+  assign dpif.dmemstore = meif.dmemstore_next;
 	assign dpif.halt = meif.halt_next;
 
 	//hazard unit
 	assign huif.ihit = dpif.ihit;
 	assign huif.dhit = dpif.dhit;
 	assign huif.ldst = meif.dmemREN | meif.dmemWEN;
-	
+
 	//fetch
 	assign pcif.jaddr = 0;
 	assign pcif.jraddr = 0;
@@ -63,7 +68,7 @@ module datapath (
 	assign pcif.PCSrc = 2'd0;
 	assign pcif.equal = 0;
 	assign pcif.pcen = huif.pcen;
-	
+
 	//decode
 	assign deif.instru = dpif.imemload;
 	assign deif.nPC = pcif.nPC;
@@ -72,7 +77,7 @@ module datapath (
 	assign deif.wsel = wbif.wsel;
 	assign deif.flush = huif.deflush;
 	assign deif.deen = huif.deen;
-	
+
 	//execute
 	assign exif.halt = deif.halt;
 	assign exif.flush = huif.exflush;
@@ -110,7 +115,7 @@ module datapath (
 	assign meif.meen = huif.meen;
   	assign meif.lui = exif.lui_next;
   	assign meif.dmemstore = exif.dmemstore_next;
-  	
+
 	//write_back
 	assign wbif.nPC = meif.nPC_next;
 	assign wbif.regWr = meif.regWr_next;

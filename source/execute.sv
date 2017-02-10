@@ -6,6 +6,8 @@
 module execute(
    logic CLK,
    logic nRST,
+   input word_t instru_ex,
+   output word_t instru_ex_next,
    execute_if.ex exif
 );
 
@@ -30,6 +32,7 @@ module execute(
          imm <= '0;
          exif.lui_next <= '0;
          exif.dmemstore_next <= '0;
+         instru_ex_next <= '0;
       end
       else if (exif.flush) begin
       	exif.nPC_next <= '0;
@@ -46,6 +49,7 @@ module execute(
          imm <= '0;
          exif.lui_next <= '0;
          exif.dmemstore_next <= '0;
+         instru_ex_next <= '0;
       end
       else if (exif.exen) begin
          exif.nPC_next <= exif.nPC;
@@ -62,6 +66,7 @@ module execute(
          shamt <= exif.shamt;
          imm <= exif.imm;
          exif.lui_next <= exif.lui;
+         instru_ex_next <= instru_ex;
       end
    end
 

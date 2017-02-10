@@ -3,10 +3,11 @@
 
 module decode(
 	input logic CLK, nRST,
+  output word_t instr,
 	decode_if.de deif
 );
 
-	word_t instr;
+
 	regbits_t shamt;
 	logic [15:0] imm;
 	control_unit_if cuif();
