@@ -1,1 +1,0 @@
-datapath: alu.svo alu_if.vho control_unit.svo control_unit_if.vho cpu_types_pkg.vho datapath_cache_if.vho decode.svo decode_if.vho execute.svo execute_if.vho fetch.svo fetch_if.vho hazard_unit.svo hazard_unit_if.vho memory.svo memory_if.vho register_file.svo register_file_if.vho write_back.svo write_back_if.vho datapath.svo
