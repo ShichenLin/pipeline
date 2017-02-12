@@ -27,31 +27,20 @@ module datapath (
   	import cpu_types_pkg::*;
 
 	// interfaces
-	hazard_unit_if huif();
-	fetch_if pcif();
-	decode_if deif();
-	execute_if exif();
-	memory_if meif();
-	write_back_if wbif();
-<<<<<<< HEAD
-  forward_unit fuif();
+	hazard_unit_if huif ();
+	fetch_if pcif ();
+	decode_if deif ();
+	execute_if exif ();
+	memory_if meif ();
+	write_back_if wbif ();
+  forward_unit fuif ();
 // instrution flow
   word_t instr, instru_ex, instru_ex_next,
   instru_me, instru_me_next, instru_wb, instru_wb_next;
   assign instru_ex = instr;
   assign instru_me = instru_ex_next;
   assign instru_wb = instru_me_next;
-=======
-  	forward_unit fuif();
-  	
-	// instrution flow
-  	word_t instr, instru_ex, instru_ex_next,
-  	instru_me, instru_me_next, instru_wb, instru_wb_next;
-  	assign instru_ex = instr;
-  	assign instru_me = instru_ex_next;
-  	assign instru_wb = instru_me_next;
-  	
->>>>>>> bb046eb75415973b52ca0e60f64f303ae55a8327
+
 	// wrappers
 	hazard_unit hu (huif);
 	fetch #(.PC_INIT(PC_INIT)) pc (CLK, nRST, pcif);
@@ -59,8 +48,7 @@ module datapath (
 	execute ex (CLK, nRST, instru_ex, instru_ex_next, exif);
 	memory me (CLK, nRST, instru_me, instru_me_next, meif);
 	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
-<<<<<<< HEAD
-  forward_unit fu(fuif);
+  forwarding_unit fu (fuif);
   //forward_unit
   assign fuif.instr_de = instr;
   assign fuif.regWr_de = deif.regWr_next;
@@ -87,37 +75,6 @@ module datapath (
   assign fuif.regDst_wb = wbif.regDst_next;
   assign fuif.regWr_wb = wbif.regWr_next;
   assign fuif.regSel_wb = wbif.regSel_next;
-=======
-  	forward_unit fu(fuif);
-  	
-  	
-	//forward_unit
-	assign fuif.instr_de = instr;
-	assign fuif.regWr_de = deif.regWr_next;
-	assign fuif.regSel_de = deif.regSel_next;
-
-	assign fuif.ALUOut_ex = exif.ALUOut_next;
-  	assign fuif.lui_ex = exif.lui_next;
-  	assign fuif.npc_ex = exif.npc_next;
-  	assign fuif.rs_ex = exif.rs_next;
-  	assign fuif.rt_ex = exif.rt_next;
-  	assign fuif.regDst_ex = exif.regDst_next;
-  	assign fuif.regWr_ex = exif.regWr_next;
-  	assign fuif.regSel_ex = exif.regSel_next;
-
-  	assign fuif.ALUOut_me = meif.ALUOut_next;
-  	assign fuif.lui_me = meif.lui_next;
-  	assign fuif.npc_me = meif.npc_next;
-  	assign fuif.dmemload_me = meif.dmemload_next;
-  	assign fuif.regDst_me = meif.regDst_next;
-  	assign fuif.regWr_me = meif.regWr_next;
-  	assign fuif.regSel_me = meif.regSel_next;
-
-  	assign fuif.wdat_wb = wbif.wdat_next;
-  	assign fuif.regDst_wb = wbif.regDst_next;
-  	assign fuif.regWr_wb = wbif.regWr_next;
-  	assign fuif.regSel_wb = wbif.regSel_next;
->>>>>>> bb046eb75415973b52ca0e60f64f303ae55a8327
 
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
@@ -135,7 +92,7 @@ module datapath (
 
 	//fetch
 	assign pcif.jaddr = 0;
-	assign pcif.jraddr = 0;
+	assign pcif.jraddr = (fuif.jfForwarding_fe)?(fuif.jraddr_fe:deif.rdat1);
 	assign pcif.imm = 0;
 	assign pcif.PCSrc = 2'd0;
 	assign pcif.equal = 0;
@@ -169,12 +126,13 @@ module datapath (
 	assign exif.rt = deif.rt_next;
 	assign exif.rs = deif.rs_next;
   assign exif.lui = deif.lui_next;
-/*
+
 	//forwarding
-	assign exif.forData = 0;
-	assign exif.srcA = 0;
-	assign exif.srcB = 0;
-*/
+	assign exif.forA = fuif.forA;
+  assign exif.forB = fuif.forB;
+	assign exif.srcA = fuif.srcA_ex;
+	assign exif.srcB = fuif.srcB_ex;
+
 	//memory
 	assign meif.halt = exif.halt_next;
 	assign meif.nPC = exif.nPC_next;
@@ -197,6 +155,6 @@ module datapath (
 	assign wbif.ALUOut = meif.ALUOut_next;
 	assign wbif.dmemload = dpif.dmemload;
 	assign wbif.wben = huif.wben;
-  	assign wbif.lui = meif.lui_next;
+  assign wbif.lui = meif.lui_next;
 
 endmodule

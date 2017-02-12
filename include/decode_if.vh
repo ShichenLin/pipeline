@@ -34,7 +34,7 @@ interface decode_if;
    modport de (
       input nPC, deen, instru, WEN, wdat, wsel, flush,
       output nPC_next, dWEN_next, dREN_next, regWr_next, regSel_next,
-regDst_next, ALUOp_next, PCSrc_next, ALUSrc_next, rdat1_next, rdat2_next,
+regDst_next, ALUOp_next, ALUSrc_next, rdat1_next, rdat2_next,
 imm_next, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt
    );
 

@@ -82,9 +82,12 @@ module execute(
             aif.portB = shamt;//shamt
          end
       endcase
+      if (exif.srcB == 1) begin
+         aif.portB = deif.forB;
+      end
    end
 
-   assign aif.portA = rsdat;
+   assign aif.portA = (exif.srcA)? deif.forA : rsdat;
    assign aif.ALUOP = aluop;
    assign exif.ALUOut_next = aif.portO;
    assign exif.equal = aif.zero;

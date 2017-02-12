@@ -27,7 +27,7 @@ interface execute_if;
    logic [2:0] ALUSrc;
    //input from Forwarding Unit
    logic srcA, srcB;
-   word_t forData;
+   word_t forA, forB;
    //output to mem state
    word_t ALUOut_next;
    // output to PC
@@ -35,10 +35,10 @@ interface execute_if;
    logic halt, halt_next;
    word_t dmemstore_next;
    word_t lui, lui_next;
-   
+
    modport ex (
       input flush, exen, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2,
-imm, shamt, ALUOp, ALUSrc, srcA, srcB, forData, rt, rs, halt, lui,
+imm, shamt, ALUOp, ALUSrc, srcA, srcB, forA, forB, rt, rs, halt, lui,
       output nPC_next, dREN_next, dWEN_next, regWr_next, regSel_next,
      regDst_next, ALUOut_next, equal, halt_next, dmemstore_next, lui_next
    );
