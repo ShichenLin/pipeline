@@ -85,22 +85,22 @@ module datapath (
 	assign dpif.imemREN = ~meif.halt_next;
 	assign dpif.dmemREN = meif.dmemREN;
 	assign dpif.dmemWEN = meif.dmemWEN;
-  	assign dpif.dmemstore = meif.dmemstore_next;
+  assign dpif.dmemstore = meif.dmemstore_next;
 	assign dpif.halt = meif.halt_next;
 
 	//hazard unit
 	assign huif.ihit = dpif.ihit;
 	assign huif.dhit = dpif.dhit;
 	assign huif.ldst = meif.dmemREN | meif.dmemWEN;
-	
+
 	//fetch
 	assign pcif.jaddr = 0;
-	assign pcif.jraddr = 0;
+	assign pcif.jraddr = (fuif.jfForwarding_fe)?(fuif.jraddr_fe:deif.rdat1);
 	assign pcif.imm = 0;
 	assign pcif.PCSrc = 2'd0;
 	assign pcif.equal = 0;
 	assign pcif.pcen = huif.pcen;
-	
+
 	//decode
 	assign deif.instru = dpif.imemload;
 	assign deif.nPC = pcif.nPC;
@@ -128,11 +128,13 @@ module datapath (
 	assign exif.shamt = deif.shamt_next;
 	assign exif.rt = deif.rt_next;
 	assign exif.rs = deif.rs_next;
-  	assign exif.lui = deif.lui_next;
+  assign exif.lui = deif.lui_next;
+
 	//forwarding
-	assign exif.forData = 0;
-	assign exif.srcA = 0;
-	assign exif.srcB = 0;
+	assign exif.forA = fuif.forA;
+  assign exif.forB = fuif.forB;
+	assign exif.srcA = fuif.srcA_ex;
+	assign exif.srcB = fuif.srcB_ex;
 
 	//memory
 	assign meif.halt = exif.halt_next;
@@ -145,9 +147,9 @@ module datapath (
 	assign meif.ALUOut = exif.ALUOut_next;
 	assign meif.flush = huif.meflush;
 	assign meif.meen = huif.meen;
-  	assign meif.lui = exif.lui_next;
-  	assign meif.dmemstore = exif.dmemstore_next;
-  	
+	assign meif.lui = exif.lui_next;
+	assign meif.dmemstore = exif.dmemstore_next;
+
 	//write_back
 	assign wbif.nPC = meif.nPC_next;
 	assign wbif.regWr = meif.regWr_next;
@@ -156,6 +158,6 @@ module datapath (
 	assign wbif.ALUOut = meif.ALUOut_next;
 	assign wbif.dmemload = dpif.dmemload;
 	assign wbif.wben = huif.wben;
-  	assign wbif.lui = meif.lui_next;
+  assign wbif.lui = meif.lui_next;
 
 endmodule
