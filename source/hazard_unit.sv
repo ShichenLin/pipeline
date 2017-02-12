@@ -56,85 +56,82 @@ module hazard_unit(
 				huif.wben = 0;
 			end
 		end
-		else if(huif.exldst)
+		else if(huif.exldst) //insert a bubble between decode and execute if necessary
 		begin
-			if(huif.rs == huif.exrdst || huif.rt == huif.exrdst || huif.rs == huif.merdst || huif.rt == huif.merdst) //insert a bubble between decode and execute
+			if(huif.rs == huif.exrdst || huif.rt == huif.exrdst || huif.rs == huif.merdst || huif.rt == huif.merdst) //lw/sw followed by a dependent instruction or sitting between dependent instructions
 			begin
-				if(huif.ihit)
-				begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 1;
-					huif.wben = 1;
-					huif.exflush = 1;
-				end
-				else begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 0;
-					huif.wben = 0;
-				end
+				huif.pcen = 0;
+				huif.deen = 0;
+				huif.exen = 0;				
+				huif.meen = huif.ihit;
+				huif.wben = huif.ihit;
+				huif.exflush = huif.ihit;
+			end
+			else if(huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw/sw followed by a dependent jr
+			begin
+				huif.pcen = 0;
+				huif.deen = 0;
+				huif.exen = 0;
+				huif.meen = huif.ihit;
+				huif.wben = huif.ihit;
+				huif.exflush = huif.ihit;
+			end
+			else begin
+				huif.pcen = huif.ihit;
+				huif.deen = huif.ihit;
+				huif.exen = huif.ihit;
+				huif.meen = huif.ihit;
+				huif.wben = huif.ihit;
 			end
 		end
 		else if(R_PCSrc == 3'd3 && huif.equal) //beq
 		begin
 			huif.PCSel = 2'd3;
-			if(huif.ihit)
-				begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 1;
-					huif.wben = 1;
-					huif.exflush = 1;
-					huif.deflush = 1;
-				end
-				else begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 0;
-					huif.wben = 0;
-				end
+			huif.pcen = 0;
+			huif.deen = 0;
+			huif.exen = 0;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
 		else if(R_PCSrc == 3'd4 && ~huif.equal) //bne
 		begin
 			huif.PCSel = 2'd3;
-			if(huif.ihit)
-				begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 1;
-					huif.wben = 1;
-					huif.exflush = 1;
-					huif.deflush = 1;
-				end
-				else begin
-					huif.pcen = 0;
-					huif.deen = 0;
-					huif.exen = 0;
-					huif.meen = 0;
-					huif.wben = 0;
-				end
-		end
-		else if(huif.PCSrc == 2'd)
-		else if(huif.ihit)
-		begin
-			huif.pcen = 1;
-			huif.deen = 1;
-			huif.exen = 1;
-			huif.meen = 1;
-			huif.wben = 1;
-		end
-		else begin
 			huif.pcen = 0;
 			huif.deen = 0;
 			huif.exen = 0;
-			huif.meen = 0;
-			huif.wben = 0;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
+		end
+		else if(huif.PCSrc == 3'd2) //j-type instruction
+		begin
+			huif.PCSel = 2'd2;
+			huif.pcen = 0;
+			huif.deen = 0;
+			huif.exen = huif.ihit;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
+			huif.deflush = huif.ihit;
+		end
+		else if(huif.PCSrc == 3'd1) //jr
+		begin
+			huif.PCSel = 2'd1;
+			huif.pcen = 0;
+			huif.deen = 0;
+			huif.exen = huif.ihit;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
+			huif.deflush = huif.ihit;
+		end
+		else begin
+			huif.pcen = huif.ihit;
+			huif.deen = huif.ihit;
+			huif.exen = huif.ihit;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
 		end
 	end
 endmodule
