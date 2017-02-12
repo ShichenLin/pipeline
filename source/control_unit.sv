@@ -14,7 +14,7 @@ module control_unit(
 		cuif.RegWr = 0;
 		cuif.ALUSrc = 2'd0;//rt
 		cuif.RegSel = 2'd0;//alu output
-		cuif.PCSrc = 2'd0;//normal
+		cuif.PCSrc = 3'd0;//normal
 		cuif.RegDst = rd;
 		cuif.ExtOp = 0;
 		cuif.dWEN = 0;
@@ -34,7 +34,7 @@ module control_unit(
 					end
 					JR: begin
 						cuif.RegWr = 0;
-						cuif.PCSrc = 2'd1;//jr
+						cuif.PCSrc = 3'd1;//jr
 					end
 					ADD,
 					ADDU:
@@ -57,21 +57,21 @@ module control_unit(
 				endcase
 			end
 			J: begin
-				cuif.PCSrc = 2'd2;//j
+				cuif.PCSrc = 3'd2;//j
 			end
 			JAL: begin
 				cuif.RegWr = 1;
-				cuif.PCSrc = 2'd2;//j
+				cuif.PCSrc = 3'd2;//j
 				cuif.RegSel = 2'd1;//jal
 				cuif.RegDst = 5'd31;
 			end
 			BEQ: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = 2'd3;//branch
+				cuif.PCSrc = 3'd3;//beq
 			end
 			BNE: begin
 				cuif.ALUOp = ALU_SUB;
-				cuif.PCSrc = 2'd3;//branch
+				cuif.PCSrc = 3'd4;//bne
 			end
 			ADDI,
 			ADDIU: begin

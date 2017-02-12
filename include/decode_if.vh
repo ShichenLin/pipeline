@@ -14,10 +14,9 @@ interface decode_if;
    // decode outputs
    regbits_t regDst_next, rt_next, rs_next; // Wsel
    logic dREN_next, dWEN_next, regWr_next;
-   logic [2:0] regSel_next;
+   logic [1:0] regSel_next;
    aluop_t ALUOp_next;
-   logic [2:0] PCSrc_next;
-   logic [2:0] ALUSrc_next;
+   logic [1:0] ALUSrc_next;
    word_t rdat1_next;
    word_t rdat2_next;
    word_t imm_next, lui_next;
