@@ -12,7 +12,7 @@ interface control_unit_if;
 	aluop_t ALUOp;
 	logic [1:0] RegSel;
 	regbits_t RegDst;
-	logic [1:0] PCSrc;
+	logic [2:0] PCSrc;
 	logic RegWr, ExtOp; //ExtOp 0:zero 1:sign
 
 	modport cu (

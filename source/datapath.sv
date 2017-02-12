@@ -33,6 +33,7 @@ module datapath (
 	execute_if exif();
 	memory_if meif();
 	write_back_if wbif();
+<<<<<<< HEAD
   forward_unit fuif();
 // instrution flow
   word_t instr, instru_ex, instru_ex_next,
@@ -40,6 +41,17 @@ module datapath (
   assign instru_ex = instr;
   assign instru_me = instru_ex_next;
   assign instru_wb = instru_me_next;
+=======
+  	forward_unit fuif();
+  	
+	// instrution flow
+  	word_t instr, instru_ex, instru_ex_next,
+  	instru_me, instru_me_next, instru_wb, instru_wb_next;
+  	assign instru_ex = instr;
+  	assign instru_me = instru_ex_next;
+  	assign instru_wb = instru_me_next;
+  	
+>>>>>>> bb046eb75415973b52ca0e60f64f303ae55a8327
 	// wrappers
 	hazard_unit hu (huif);
 	fetch #(.PC_INIT(PC_INIT)) pc (CLK, nRST, pcif);
@@ -47,6 +59,7 @@ module datapath (
 	execute ex (CLK, nRST, instru_ex, instru_ex_next, exif);
 	memory me (CLK, nRST, instru_me, instru_me_next, meif);
 	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
+<<<<<<< HEAD
   forward_unit fu(fuif);
   //forward_unit
   assign fuif.instr_de = instr;
@@ -74,6 +87,37 @@ module datapath (
   assign fuif.regDst_wb = wbif.regDst_next;
   assign fuif.regWr_wb = wbif.regWr_next;
   assign fuif.regSel_wb = wbif.regSel_next;
+=======
+  	forward_unit fu(fuif);
+  	
+  	
+	//forward_unit
+	assign fuif.instr_de = instr;
+	assign fuif.regWr_de = deif.regWr_next;
+	assign fuif.regSel_de = deif.regSel_next;
+
+	assign fuif.ALUOut_ex = exif.ALUOut_next;
+  	assign fuif.lui_ex = exif.lui_next;
+  	assign fuif.npc_ex = exif.npc_next;
+  	assign fuif.rs_ex = exif.rs_next;
+  	assign fuif.rt_ex = exif.rt_next;
+  	assign fuif.regDst_ex = exif.regDst_next;
+  	assign fuif.regWr_ex = exif.regWr_next;
+  	assign fuif.regSel_ex = exif.regSel_next;
+
+  	assign fuif.ALUOut_me = meif.ALUOut_next;
+  	assign fuif.lui_me = meif.lui_next;
+  	assign fuif.npc_me = meif.npc_next;
+  	assign fuif.dmemload_me = meif.dmemload_next;
+  	assign fuif.regDst_me = meif.regDst_next;
+  	assign fuif.regWr_me = meif.regWr_next;
+  	assign fuif.regSel_me = meif.regSel_next;
+
+  	assign fuif.wdat_wb = wbif.wdat_next;
+  	assign fuif.regDst_wb = wbif.regDst_next;
+  	assign fuif.regWr_wb = wbif.regWr_next;
+  	assign fuif.regSel_wb = wbif.regSel_next;
+>>>>>>> bb046eb75415973b52ca0e60f64f303ae55a8327
 
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
