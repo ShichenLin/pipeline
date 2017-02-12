@@ -11,21 +11,21 @@ import cpu_types_pkg::*;
       if (fuif.instru_de[31:26] == JR) begin
          if (fuif.instru_de[25:20] == fuif.regDst_ex && fuif.regWr_ex == 1) begin
             fuif.jrForwarding_fe = 1;
-            casez(fuif.regSrc_ex) begin
-               2b'00: fuif.jraddr_fe = fuif.ALUOut_ex;
-               2b'01: fuif.jraddr_fe = fuif.npc_ex;
-               2b'10: fuif.jraddr_fe = fuif.lui.ex;
+            casez(fuif.regSrc_ex)
+               2'b00: fuif.jraddr_fe = fuif.ALUOut_ex;
+               2'b01: fuif.jraddr_fe = fuif.npc_ex;
+               2'b10: fuif.jraddr_fe = fuif.lui.ex;
                //2b'11: fuif.jraddr_fe  // dmemload -> harazed unit
-            end
+            endcase
           end
           if (fuif.instru_de[25:20] == fuif.regDst_me && fuif.regWr_me == 1) begin
              fuif.jrForwarding = 1;
-             casez(fuif.regSrc_me) begin
-               2b'00: fuif.jraddr_fe = fuif.ALUOut_me;
-               2b'01: fuif.jraddr_fe = fuif.npc_me;
-               2b'10: fuif.jraddr_fe = fuif.lui_me;
-               2b'11: fuif.jraddr_fe = fuif.dmemload_me;
-             end
+             casez(fuif.regSrc_me)
+               2'b00: fuif.jraddr_fe = fuif.ALUOut_me;
+               2'b01: fuif.jraddr_fe = fuif.npc_me;
+               2'b10: fuif.jraddr_fe = fuif.lui_me;
+               2'b11: fuif.jraddr_fe = fuif.dmemload_me;
+             endcase
            end
            /*if (fuif.instru_de[25:20] == fuif.regDst_wb && fuif.regWr == 1) begin
               fuif.jrForwarding = 1;
@@ -41,21 +41,21 @@ import cpu_types_pkg::*;
       //mem
       if (fuif.regWr_me == 1) begin
          if (fuif.rs_ex == fuif.regDst_me) begin
-            casez(fuif.regSrc_me) begin
-               2b'00: fuif.forA_ex = fuif.ALUOut_me;
-               2b'01: fuif.forA_ex = fuif.npc_me;
-               2b'10: fuif.forA_ex = fuif.lui_me;
-               2b'11: fuif.forA_ex = fuif.dmemload_me;
-            end
+            casez(fuif.regSrc_me)
+               2'b00: fuif.forA_ex = fuif.ALUOut_me;
+               2'b01: fuif.forA_ex = fuif.npc_me;
+               2'b10: fuif.forA_ex = fuif.lui_me;
+               2'b11: fuif.forA_ex = fuif.dmemload_me;
+            endcase
             fuif.srA_ex = 1;
          end
          if (fuif.rt_ex == fuif.regDst_me) begin
-             casez(fuif.regSrc_me) begin
-               2b'00: fuif.forB_ex = fuif.ALUOut_me;
-               2b'01: fuif.forB_ex = fuif.npc_me;
-               2b'10: fuif.forB_ex = fuif.lui_me;
-               2b'11: fuif.forB_ex = fuif.dmemload_me;
-            end
+             casez(fuif.regSrc_me)
+               2'b00: fuif.forB_ex = fuif.ALUOut_me;
+               2'b01: fuif.forB_ex = fuif.npc_me;
+               2'b10: fuif.forB_ex = fuif.lui_me;
+               2'b11: fuif.forB_ex = fuif.dmemload_me;
+            endcase
             fuif.srcB_ex = 1;
          end
       end
