@@ -33,14 +33,51 @@ module datapath (
 	execute_if exif();
 	memory_if meif();
 	write_back_if wbif();
-
+  	forward_unit fuif();
+  	
+	// instrution flow
+  	word_t instr, instru_ex, instru_ex_next,
+  	instru_me, instru_me_next, instru_wb, instru_wb_next;
+  	assign instru_ex = instr;
+  	assign instru_me = instru_ex_next;
+  	assign instru_wb = instru_me_next;
+  	
 	// wrappers
 	hazard_unit hu (huif);
 	fetch #(.PC_INIT(PC_INIT)) pc (CLK, nRST, pcif);
-	decode de (CLK, nRST, deif);
-	execute ex (CLK, nRST, exif);
-	memory me (CLK, nRST, meif);
-	write_back wb (CLK, nRST, wbif);
+	decode de (CLK, nRST, instr, deif);
+	execute ex (CLK, nRST, instru_ex, instru_ex_next, exif);
+	memory me (CLK, nRST, instru_me, instru_me_next, meif);
+	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
+  	forward_unit fu(fuif);
+  	
+  	
+	//forward_unit
+	assign fuif.instr_de = instr;
+	assign fuif.regWr_de = deif.regWr_next;
+	assign fuif.regSel_de = deif.regSel_next;
+
+	assign fuif.ALUOut_ex = exif.ALUOut_next;
+  	assign fuif.lui_ex = exif.lui_next;
+  	assign fuif.npc_ex = exif.npc_next;
+  	assign fuif.rs_ex = exif.rs_next;
+  	assign fuif.rt_ex = exif.rt_next;
+  	assign fuif.regDst_ex = exif.regDst_next;
+  	assign fuif.regWr_ex = exif.regWr_next;
+  	assign fuif.regSel_ex = exif.regSel_next;
+
+  	assign fuif.ALUOut_me = meif.ALUOut_next;
+  	assign fuif.lui_me = meif.lui_next;
+  	assign fuif.npc_me = meif.npc_next;
+  	assign fuif.dmemload_me = meif.dmemload_next;
+  	assign fuif.regDst_me = meif.regDst_next;
+  	assign fuif.regWr_me = meif.regWr_next;
+  	assign fuif.regSel_me = meif.regSel_next;
+
+  	assign fuif.wdat_wb = wbif.wdat_next;
+  	assign fuif.regDst_wb = wbif.regDst_next;
+  	assign fuif.regWr_wb = wbif.regWr_next;
+  	assign fuif.regSel_wb = wbif.regSel_next;
 
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
