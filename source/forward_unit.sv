@@ -40,7 +40,8 @@ import cpu_types_pkg::*;
       fuif.srcB_ex = 0;
       //mem
       if (fuif.regWr_me == 1) begin
-         if (fuif.rs_ex == fuif.regDst_me) begin
+         //A
+        if (fuif.rs_ex == fuif.regDst_me) begin
             casez(fuif.regSrc_me)
                2'b00: fuif.forA_ex = fuif.ALUOut_me;
                2'b01: fuif.forA_ex = fuif.npc_me;
@@ -49,6 +50,7 @@ import cpu_types_pkg::*;
             endcase
             fuif.srA_ex = 1;
          end
+          //B
          if (fuif.rt_ex == fuif.regDst_me) begin
              casez(fuif.regSrc_me)
                2'b00: fuif.forB_ex = fuif.ALUOut_me;

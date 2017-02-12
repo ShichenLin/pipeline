@@ -124,12 +124,13 @@ module datapath (
 	assign exif.shamt = deif.shamt_next;
 	assign exif.rt = deif.rt_next;
 	assign exif.rs = deif.rs_next;
-  	assign exif.lui = deif.lui_next;
+  assign exif.lui = deif.lui_next;
+/*
 	//forwarding
 	assign exif.forData = 0;
 	assign exif.srcA = 0;
 	assign exif.srcB = 0;
-
+*/
 	//memory
 	assign meif.halt = exif.halt_next;
 	assign meif.nPC = exif.nPC_next;
@@ -141,8 +142,8 @@ module datapath (
 	assign meif.ALUOut = exif.ALUOut_next;
 	assign meif.flush = huif.meflush;
 	assign meif.meen = huif.meen;
-  	assign meif.lui = exif.lui_next;
-  	assign meif.dmemstore = exif.dmemstore_next;
+	assign meif.lui = exif.lui_next;
+	assign meif.dmemstore = exif.dmemstore_next;
 
 	//write_back
 	assign wbif.nPC = meif.nPC_next;
