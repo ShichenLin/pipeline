@@ -6,10 +6,11 @@ import cpu_types_pkg::*;
 
 interface decode_if;
    // Pass through signals
-   word_t nPC;
-   word_t nPC_next;
+   word_t nPC, nPC_next;
+   word_t PC, jPC;
+   logic [25:0] jaddr;
    //decode inputs
-   word_t instru;
+   word_t instru, instr;
    logic deen;
    // decode outputs
    regbits_t regDst_next, rt_next, rs_next; // Wsel
@@ -19,7 +20,7 @@ interface decode_if;
    logic [1:0] ALUSrc_next;
    word_t rdat1_next;
    word_t rdat2_next;
-   word_t imm_next, lui_next;
+   word_t imm, lui_next, brimm;
    logic [SHAM_W:0] shamt_next;
    //pcsel output
    word_t PCSrc;
@@ -32,10 +33,10 @@ interface decode_if;
    logic halt;
 
    modport de (
-      input nPC, deen, instru, WEN, wdat, wsel, flush,
-      output nPC_next, dWEN_next, dREN_next, regWr_next, regSel_next,
-regDst_next, ALUOp_next, ALUSrc_next, rdat1_next, rdat2_next,
-imm_next, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt
+      input nPC, deen, instru, WEN, wdat, wsel, flush, PC,
+      output nPC_next, instr, jPC, jaddr, dWEN_next, dREN_next, regWr_next, regSel_next,
+			regDst_next, ALUOp_next, ALUSrc_next, rdat1_next, rdat2_next,
+			imm, brimm, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt
    );
 
 

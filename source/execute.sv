@@ -18,6 +18,8 @@ module execute(
 
    always_ff@(posedge CLK, negedge nRST) begin
       if (~nRST) begin
+      	 exif.rs_next <= 0;
+      	 exif.rt_next <= 0;      	
          exif.nPC_next <= '0;
          exif.dREN_next <= '0;
          exif.dWEN_next <= '0;
@@ -30,12 +32,15 @@ module execute(
          rsdat <= '0;
          shamt <= '0;
          imm <= '0;
+         exif.brimm_next <= 0;
          exif.lui_next <= '0;
          exif.dmemstore_next <= '0;
          instru_ex_next <= '0;
       end
       else if (exif.flush) begin
-      	exif.nPC_next <= '0;
+      	 exif.rs_next <= 0;
+      	 exif.rt_next <= 0;
+      	 exif.nPC_next <= '0;
          exif.dREN_next <= '0;
          exif.dWEN_next <= '0;
          exif.regWr_next <= '0;
@@ -47,11 +52,14 @@ module execute(
          rsdat <= '0;
          shamt <= '0;
          imm <= '0;
+         exif.brimm_next <= 0;
          exif.lui_next <= '0;
          exif.dmemstore_next <= '0;
          instru_ex_next <= '0;
       end
       else if (exif.exen) begin
+      	 exif.rs_next <= exif.rs;
+      	 exif.rt_next <= exif.rt;
          exif.nPC_next <= exif.nPC;
          exif.dREN_next <= exif.dREN;
          exif.dWEN_next <= exif.dWEN;
@@ -65,6 +73,7 @@ module execute(
          rsdat <= exif.rdat1;
          shamt <= exif.shamt;
          imm <= exif.imm;
+         exif.brimm_next <= exif.brimm;
          exif.lui_next <= exif.lui;
          instru_ex_next <= instru_ex;
       end
@@ -83,11 +92,11 @@ module execute(
          end
       endcase
       if (exif.srcB == 1) begin
-         aif.portB = deif.forB;
+         aif.portB = exif.forB;
       end
    end
 
-   assign aif.portA = (exif.srcA)? deif.forA : rsdat;
+   assign aif.portA = (exif.srcA)? exif.forA : rsdat;
    assign aif.ALUOP = aluop;
    assign exif.ALUOut_next = aif.portO;
    assign exif.equal = aif.zero;

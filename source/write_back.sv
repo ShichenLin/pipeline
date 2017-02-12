@@ -20,7 +20,7 @@ module write_back(
 			R_dmemload <= 0;
 			wbif.WEN <= 0;
 			wbif.wsel <= 0;
-      instru_wb_next <= '0;
+      		instru_wb_next <= '0;
 		end
 		else if(wbif.wben)
 		begin
@@ -34,7 +34,7 @@ module write_back(
 			R_lui <= wbif.lui;
 			wbif.WEN <= wbif.regWr;
 			wbif.wsel <= wbif.regDst;
-      instru_wb_next <= instru_wb;
+      		instru_wb_next <= instru_wb;
 		end
 	end
 

@@ -8,14 +8,13 @@ interface fetch_if;
    logic [25:0] jaddr;
    logic [15:0] imm;
    logic [2:0] PCSrc;
-   logic equal;
    word_t imemaddr;
-   word_t nPC;
+   word_t nPC, jPC;
    word_t jraddr;
    logic pcen;
 
    modport pc (
-      input jaddr, jraddr, imm, PCSrc, equal, pcen,
+      input jaddr, jraddr, imm, PCSrc, pcen, jPC,
       output imemaddr, nPC
    );
 

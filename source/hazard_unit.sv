@@ -10,7 +10,7 @@ module hazard_unit(
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST)
-			R_PCSrc <= '0
+			R_PCSrc <= '0;
 		else if(huif.ihit)
 			R_PCSrc <= huif.PCSrc;
 	end
@@ -56,7 +56,7 @@ module hazard_unit(
 				huif.wben = 0;
 			end
 		end
-		else if(huif.exldst) //insert a bubble between decode and execute if necessary
+		else if(huif.exld) //insert a bubble between decode and execute if necessary
 		begin
 			if(huif.rs == huif.exrdst || huif.rt == huif.exrdst || huif.rs == huif.merdst || huif.rt == huif.merdst) //lw/sw followed by a dependent instruction or sitting between dependent instructions
 			begin
