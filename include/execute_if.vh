@@ -15,6 +15,7 @@ interface execute_if;
    logic [2:0] regSel;
    regbits_t regDst, rt, rs, rt_next, rs_next;
    //out
+   logic[2:0] ALUSrc_next;
    word_t nPC_next;
    logic dREN_next, dWEN_next, regWr_next;
    logic [2:0] regSel_next;
@@ -40,7 +41,7 @@ interface execute_if;
    modport ex (
       input flush, exen, nPC, dREN, dWEN, regWr, regSel, regDst, rdat1, rdat2,
 imm, shamt, ALUOp, ALUSrc, srcA, srcB, forA, forB, rt, rs, halt, lui, brimm,
-      output nPC_next, dREN_next, dWEN_next, regWr_next, regSel_next, regDst_next, ALUOut_next, equal, halt_next, dmemstore_next, lui_next, brimm_next, rt_next, rs_next
+      output nPC_next, dREN_next, dWEN_next, regWr_next, regSel_next, regDst_next, ALUOut_next, equal, halt_next, dmemstore_next, lui_next, brimm_next, rt_next, rs_next, ALUSrc_next
    );
 
 endinterface

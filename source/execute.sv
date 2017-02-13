@@ -100,5 +100,6 @@ module execute(
    assign aif.ALUOP = aluop;
    assign exif.ALUOut_next = aif.portO;
    assign exif.equal = aif.zero;
+   assign exif.ALUSrc_next = alusrc;
    alu ALU (aif);
 endmodule

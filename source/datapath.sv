@@ -36,9 +36,9 @@ module datapath (
   	forwarding_unit_if fuif();
   	
 	// instrution flow
-  	word_t instr, instru_ex, instru_ex_next,
+  	word_t instru_ex, instru_ex_next,
   	instru_me, instru_me_next, instru_wb, instru_wb_next;
-  	assign instru_ex = instr;
+  	assign instru_ex = deif.instr;
   	assign instru_me = instru_ex_next;
   	assign instru_wb = instru_me_next;
   	
@@ -66,6 +66,7 @@ module datapath (
   	assign fuif.regWr_ex = exif.regWr_next;
   	assign fuif.regSel_ex = exif.regSel_next;
   	assign fuif.dWEN_ex = exif.dWEN_next;
+  	assign fuif.ALUSrc_ex = exif.ALUSrc_next;
 
   	assign fuif.ALUOut_me = meif.ALUOut_next;
   	assign fuif.lui_me = meif.lui_next;
@@ -102,6 +103,7 @@ module datapath (
 	assign huif.equal = exif.equal;
 	
 	//fetch
+	assign pcif.brPC = exif.nPC_next;
 	assign pcif.jPC = deif.jPC;
 	assign pcif.jaddr = deif.instr[25:0];
 	assign pcif.jraddr = fuif.jrForwarding_fe ? fuif.jraddr_fe : deif.rdat1_next;

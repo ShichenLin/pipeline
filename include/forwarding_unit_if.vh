@@ -25,7 +25,7 @@ interface forwarding_unit_if;
    word_t forA_ex, forB_ex;
    word_t forDmemstore_ex;
    logic srcDmemstore_ex;
-   
+   logic [1:0] ALUSrc_ex;
    //memory
    word_t lui_me, ALUOut_me, npc_me, dmemload_me;
    regbits_t regDst_me;
@@ -40,7 +40,7 @@ interface forwarding_unit_if;
    modport fu (
       input instru_de, regWr_de, regSel_de, ALUOut_ex, lui_ex, npc_ex,
      rs_ex, rt_ex, regDst_ex, regWr_ex, regSel_ex, lui_me, ALUOut_me,
-     npc_me, dmemload_me, regDst_me, regWr_me, wdat_wb, dWEN_ex,
+     npc_me, dmemload_me, regDst_me, regWr_me, wdat_wb, dWEN_ex, ALUSrc_ex,
      regDst_wb, regWr_wb, regSel_me,
       output jraddr_fe, jrForwarding_fe, srcA_ex, srcB_ex, forA_ex, forB_ex, forDmemstore_ex, srcDmemstore_ex
    );

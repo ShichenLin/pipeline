@@ -87,7 +87,7 @@ module hazard_unit(
 		else if(R_PCSrc == 3'd3 && huif.equal) //beq
 		begin
 			huif.PCSel = 2'd3;
-			huif.pcen = 0;
+			huif.pcen = huif.ihit;
 			huif.deen = 0;
 			huif.exen = 0;
 			huif.meen = huif.ihit;
@@ -98,7 +98,7 @@ module hazard_unit(
 		else if(R_PCSrc == 3'd4 && ~huif.equal) //bne
 		begin
 			huif.PCSel = 2'd3;
-			huif.pcen = 0;
+			huif.pcen = huif.ihit;
 			huif.deen = 0;
 			huif.exen = 0;
 			huif.meen = huif.ihit;
@@ -109,7 +109,7 @@ module hazard_unit(
 		else if(huif.PCSrc == 3'd2) //j-type instruction
 		begin
 			huif.PCSel = 2'd2;
-			huif.pcen = 0;
+			huif.pcen = huif.ihit;
 			huif.deen = 0;
 			huif.exen = huif.ihit;
 			huif.meen = huif.ihit;

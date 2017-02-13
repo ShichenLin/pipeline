@@ -40,6 +40,17 @@ import cpu_types_pkg::*;
       fuif.srcB_ex = 0;
       fuif.forDmemstore_ex = '0;
       fuif.srcDmemstore_ex = 0;
+       //write_back
+      if (fuif.regWr_wb == 1 && fuif.dWEN_ex == 0) begin
+         if (fuif.rs_ex == fuif.regDst_wb) begin
+             fuif.forA_ex = fuif.wdat_wb;
+             fuif.srcA_ex = 1;
+         end
+         if (fuif.rt_ex == fuif.regDst_wb && fuif.ALUSrc_ex == 2'b00) begin
+             fuif.forB_ex = fuif.wdat_wb;
+             fuif.srcB_ex = 1;
+         end
+      end
       //mem
       if (fuif.regWr_me == 1 && fuif.dWEN_ex == 0) begin
          if (fuif.rs_ex == fuif.regDst_me) begin
@@ -51,7 +62,7 @@ import cpu_types_pkg::*;
             endcase
             fuif.srcA_ex = 1;
          end
-         if (fuif.rt_ex == fuif.regDst_me) begin
+         if (fuif.rt_ex == fuif.regDst_me && fuif.ALUSrc_ex == 2'b00) begin
              casez(fuif.regSel_me)
                2'b00: fuif.forB_ex = fuif.ALUOut_me;
                2'b01: fuif.forB_ex = fuif.npc_me;
@@ -61,17 +72,7 @@ import cpu_types_pkg::*;
             fuif.srcB_ex = 1;
          end
       end
-      //write_back
-      if (fuif.regWr_wb == 1 && fuif.dWEN_ex == 0) begin
-         if (fuif.rs_ex == fuif.regDst_wb) begin
-             fuif.forA_ex = fuif.wdat_wb;
-             fuif.srcA_ex = 1;
-         end
-         if (fuif.rt_ex == fuif.regDst_wb) begin
-             fuif.forB_ex = fuif.wdat_wb;
-             fuif.srcB_ex = 1;
-         end
-      end
+     
       //imemload
        if (fuif.regWr_wb == 1) begin
          if (fuif.rt_ex == fuif.regDst_wb) begin
