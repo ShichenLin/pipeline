@@ -7,7 +7,7 @@ module fetch(
 
 	parameter PC_INIT = 0;
 	word_t PC, nxtPC;
-	
+
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST)
@@ -15,9 +15,10 @@ module fetch(
 		else if(pcif.pcen)
 			PC <= nxtPC;
 	end
-	
+	reg test;
 	always_comb
 	begin
+    test = 0;
 		casez(pcif.PCSrc)
 			2'd0:	nxtPC = PC + 4; //normal
 			2'd3:	nxtPC = pcif.brPC + {{14{pcif.imm[15]}}, pcif.imm, 2'b0}; //branch
@@ -25,7 +26,7 @@ module fetch(
 			2'd2:	nxtPC = {pcif.jPC[31:28], pcif.jaddr, 2'b0}; //j
 		endcase
 	end
-	
+
 	assign pcif.imemaddr = PC;
 	assign pcif.nPC = PC + 4;
 endmodule

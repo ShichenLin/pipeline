@@ -52,7 +52,7 @@ import cpu_types_pkg::*;
          end
       end
       //mem
-      if (fuif.regWr_me == 1 && fuif.dWEN_ex == 0) begin
+      if (fuif.regWr_me == 1) begin//change
          if (fuif.rs_ex == fuif.regDst_me) begin
             casez(fuif.regSel_me)
                2'b00: fuif.forA_ex = fuif.ALUOut_me;

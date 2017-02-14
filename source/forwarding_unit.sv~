@@ -16,7 +16,6 @@ import cpu_types_pkg::*;
                2'b00: fuif.jraddr_fe = fuif.ALUOut_ex;
                2'b01: fuif.jraddr_fe = fuif.npc_ex;
                2'b10: fuif.jraddr_fe = fuif.lui_ex;
-               //2b'11: fuif.jraddr_fe  // dmemload -> harazed unit
             endcase
           end
           if (fuif.instru_de[25:21] == fuif.regDst_me && fuif.regWr_me == 1) begin

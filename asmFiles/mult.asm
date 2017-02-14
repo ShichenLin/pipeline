@@ -7,7 +7,7 @@
 	push $8
 	jal mult
 	halt
-	
+
 mult:
 	and $4, $0, $0
 	pop $2
@@ -25,7 +25,7 @@ loop:
 done:
 	push $4
 	jr $31
-	
+
 test_data:
 	org 0x0100
 	cfw 8
