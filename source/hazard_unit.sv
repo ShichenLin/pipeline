@@ -5,7 +5,7 @@ module hazard_unit(
 	hazard_unit_if.hu huif
 );
 
-	logic [1:0] R_PCSrc;
+	logic [2:0] R_PCSrc;
 
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
@@ -85,9 +85,9 @@ module hazard_unit(
 			end
 		end
                 //rtpye load retype
-                else if () begin 
+                else if () begin
 
-                end 
+                end
 		else if(R_PCSrc == 3'd3 && huif.equal) //beq
 		begin
 			huif.PCSel = 2'd3;
