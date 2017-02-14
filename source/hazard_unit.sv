@@ -56,33 +56,23 @@ module hazard_unit(
 				huif.wben = 0;
 			end
 		end
-		else if(huif.exREN | huif.exWEN) //insert a bubble between decode and execute if necessary
+		else if((huif.exREN || huif.exWEN) && (huif.rs == huif.merdst || huif.rt == huif.merdst)) //insert a bubble between decode and execute if lw/sw is sitting between dependent instructions
 		begin
-			if(huif.rs == huif.merdst || huif.rt == huif.merdst) //sitting between dependent instructions
-			begin
+			huif.pcen = 0;
+			huif.deen = 0;
+			huif.exen = 0;
+			huif.meen = huif.ihit;
+			huif.wben = huif.ihit;
+			huif.exflush = huif.ihit;
+		end
+		else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw/sw followed by a dependent jr
+		begin
 				huif.pcen = 0;
 				huif.deen = 0;
 				huif.exen = 0;
 				huif.meen = huif.ihit;
 				huif.wben = huif.ihit;
 				huif.exflush = huif.ihit;
-			end
-			else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw followed by a dependent jr
-			begin
-				huif.pcen = 0;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.meen = huif.ihit;
-				huif.wben = huif.ihit;
-				huif.exflush = huif.ihit;
-			end
-			else begin
-				huif.pcen = huif.ihit;
-				huif.deen = huif.ihit;
-				huif.exen = huif.ihit;
-				huif.meen = huif.ihit;
-				huif.wben = huif.ihit;
-			end
 		end
 		else if(R_PCSrc == 3'd3 && huif.equal) //beq
 		begin
