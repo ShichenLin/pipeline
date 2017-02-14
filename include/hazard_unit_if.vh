@@ -6,7 +6,7 @@ import cpu_types_pkg::*;
 
 interface hazard_unit_if;
 	logic ihit, dhit;
-	logic exld, meldst;
+	logic exREN, exWEN, meldst;
 	regbits_t rs, rt, exrdst, merdst;
 	logic [2:0] PCSrc;
 	logic [1:0] PCSel;
@@ -15,11 +15,18 @@ interface hazard_unit_if;
 	logic pcen, deen, exen, meen, wben;
 	//flush signals
 	logic deflush, exflush, meflush;
+	
 	modport hu (
-		input ihit, dhit, exld, meldst, rs, rt, exrdst, merdst, PCSrc, equal,
+		input ihit, dhit, meldst, rs, rt, exREN, exWEN, exrdst, merdst, PCSrc, equal,
 		output pcen, deen, exen, meen, wben,
 			   deflush, exflush, meflush,
 			   PCSel
+	);
+	modport tb(
+		input pcen, deen, exen, meen, wben,
+			   deflush, exflush, meflush,
+			   PCSel,
+		output ihit, dhit, meldst, rs, rt, exREN, exWEN, exrdst, merdst, PCSrc, equal		
 	);
 endinterface
 `endif

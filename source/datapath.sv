@@ -94,7 +94,8 @@ module datapath (
 	assign huif.ihit = dpif.ihit;
 	assign huif.dhit = dpif.dhit;
 	assign huif.meldst = meif.dmemREN | meif.dmemWEN;
-	assign huif.exld = exif.dREN_next;
+	assign huif.exREN = exif.dREN_next;
+	assign huif.exWEN = exif.dWEN_next;
 	assign huif.rs = deif.rs_next;
 	assign huif.rt = deif.rt_next;
 	assign huif.exrdst = exif.regDst_next;
