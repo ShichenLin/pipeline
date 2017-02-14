@@ -4,7 +4,7 @@ module forwarding_unit(
    forwarding_unit_if.fu fuif
 );
 import cpu_types_pkg::*;
-  // Jr
+   //Jr
    always_comb begin
       fuif.jrForwarding_fe = 0;
       fuif.jraddr_fe = '0;
@@ -32,6 +32,7 @@ import cpu_types_pkg::*;
            end*/
       end
    end
+   
    //ALU
    always_comb begin
       fuif.forA_ex = '0;
@@ -40,7 +41,8 @@ import cpu_types_pkg::*;
       fuif.srcB_ex = 0;
       fuif.forDmemstore_ex = '0;
       fuif.srcDmemstore_ex = 0;
-       //write_back
+      
+      //write_back
       if (fuif.regWr_wb == 1 && fuif.dWEN_ex == 0) begin
          if (fuif.rs_ex == fuif.regDst_wb) begin
              fuif.forA_ex = fuif.wdat_wb;
@@ -51,6 +53,7 @@ import cpu_types_pkg::*;
              fuif.srcB_ex = 1;
          end
       end
+      
       //mem
       if (fuif.regWr_me == 1) begin //change
          if (fuif.rs_ex == fuif.regDst_me && fuif.dWEN_ex == 0) begin // change 2/14/5:20

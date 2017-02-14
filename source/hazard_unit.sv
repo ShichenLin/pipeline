@@ -10,7 +10,9 @@ module hazard_unit(
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST)
-			R_PCSrc <= '0;
+			R_PCSrc <= 0;
+		else if(huif.exflush)
+			R_PCSrc <= 0;
 		else if(huif.ihit)
 			R_PCSrc <= huif.PCSrc;
 	end
@@ -25,11 +27,11 @@ module hazard_unit(
 		begin
 			if(huif.ihit && huif.dhit) //move pipe forward
 			begin
-				huif.pcen = 1;
-				huif.deen = 1;
-				huif.exen = 1;
-				huif.meen = 1;
-				huif.wben = 1;
+				huif.pcen = huif.ihit;
+				huif.deen = huif.ihit;
+				huif.exen = huif.ihit;
+				huif.meen = huif.ihit;
+				huif.wben = huif.ihit;
 			end
 			else if(~huif.ihit && huif.dhit) //stall before mem
 			begin
@@ -37,8 +39,8 @@ module hazard_unit(
 				huif.deen = 0;
 				huif.exen = 0;
 				huif.meen = 0;
-				huif.wben = 1;
-				huif.meflush = 1;
+				huif.wben = huif.dhit;
+				huif.meflush = huif.dhit;
 			end
 			else if(huif.ihit && ~huif.dhit) //stall pipe
 			begin
