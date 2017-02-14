@@ -8,17 +8,17 @@ import cpu_types_pkg::*;
    always_comb begin
       fuif.jrForwarding_fe = 0;
       fuif.jraddr_fe = '0;
-      if (fuif.instru_de[31:26] == JR) begin
-         if (fuif.instru_de[25:20] == fuif.regDst_ex && fuif.regWr_ex == 1) begin
+      if (fuif.instru_de[31:26] == '0 && fuif.instru_de[6:0] == JR) begin
+          fuif.jraddr_fe = 1;
+         if (fuif.instru_de[25:21] == fuif.regDst_ex && fuif.regWr_ex == 1) begin
             fuif.jrForwarding_fe = 1;
             casez(fuif.regSel_ex)
                2'b00: fuif.jraddr_fe = fuif.ALUOut_ex;
                2'b01: fuif.jraddr_fe = fuif.npc_ex;
                2'b10: fuif.jraddr_fe = fuif.lui_ex;
-               //2b'11: fuif.jraddr_fe  // dmemload -> harazed unit
             endcase
           end
-          if (fuif.instru_de[25:20] == fuif.regDst_me && fuif.regWr_me == 1) begin
+          if (fuif.instru_de[25:21] == fuif.regDst_me && fuif.regWr_me == 1) begin
              fuif.jrForwarding_fe = 1;
              casez(fuif.regSel_me)
                2'b00: fuif.jraddr_fe = fuif.ALUOut_me;
