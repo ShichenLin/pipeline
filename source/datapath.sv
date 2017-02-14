@@ -77,7 +77,7 @@ module datapath (
   	assign fuif.regSel_me = meif.regSel_next;
 
   	assign fuif.wdat_wb = wbif.wdat;
-  	assign fuif.regDst_wb = wbif.regDst;
+  	assign fuif.regDst_wb = wbif.wsel;
   	assign fuif.regWr_wb = wbif.WEN;
 
 

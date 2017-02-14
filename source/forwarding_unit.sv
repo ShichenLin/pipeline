@@ -52,13 +52,13 @@ import cpu_types_pkg::*;
          end
       end
       //mem
-      if (fuif.regWr_me == 1) begin//change
-         if (fuif.rs_ex == fuif.regDst_me) begin
+      if (fuif.regWr_me == 1) begin //change
+         if (fuif.rs_ex == fuif.regDst_me && fuif.dWEN_ex == 0) begin // change 2/14/5:20
             casez(fuif.regSel_me)
                2'b00: fuif.forA_ex = fuif.ALUOut_me;
                2'b01: fuif.forA_ex = fuif.npc_me;
                2'b10: fuif.forA_ex = fuif.lui_me;
-               2'b11: fuif.forA_ex = fuif.dmemload_me;
+               //2'b11: fuif.forA_ex = fuif.dmemload_me;
             endcase
             fuif.srcA_ex = 1;
          end
@@ -67,13 +67,13 @@ import cpu_types_pkg::*;
                2'b00: fuif.forB_ex = fuif.ALUOut_me;
                2'b01: fuif.forB_ex = fuif.npc_me;
                2'b10: fuif.forB_ex = fuif.lui_me;
-               2'b11: fuif.forB_ex = fuif.dmemload_me;
+             //  2'b11: fuif.forB_ex = fuif.dmemload_me;
             endcase
             fuif.srcB_ex = 1;
          end
       end
      
-      //imemload
+      //dmemstore
        if (fuif.regWr_wb == 1) begin
          if (fuif.rt_ex == fuif.regDst_wb) begin
              fuif.forDmemstore_ex = fuif.wdat_wb;
