@@ -67,7 +67,7 @@ module hazard_unit(
 				huif.wben = huif.ihit;
 				huif.exflush = huif.ihit;
 			end
-			else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw followed by a dependent jr
+			else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw/sw followed by a dependent jr
 			begin
 				huif.pcen = 0;
 				huif.deen = 0;
