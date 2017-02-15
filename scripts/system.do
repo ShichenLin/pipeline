@@ -5,13 +5,21 @@ add wave -noupdate /system_tb/nRST
 add wave -noupdate /system_tb/DUT/CPU/DP/pc/PC
 add wave -noupdate /system_tb/DUT/CPU/DP/deif/instr
 add wave -noupdate /system_tb/DUT/CPU/DP/de/rf/regs
-add wave -noupdate /system_tb/DUT/CPU/DP/dpif/ihit
+add wave -noupdate /system_tb/DUT/CPU/DP/instru_me_next
 add wave -noupdate /system_tb/DUT/CPU/DP/pcif/PCSrc
+add wave -noupdate /system_tb/DUT/CPU/DP/hu/R_PCSrc
+add wave -noupdate /system_tb/DUT/CPU/DP/huif/PCSel
+add wave -noupdate /system_tb/DUT/CPU/DP/huif/PCSrc
+add wave -noupdate /system_tb/DUT/CPU/DP/huif/equal
+add wave -noupdate /system_tb/DUT/CPU/dcif/dmemREN
+add wave -noupdate /system_tb/DUT/CPU/dcif/dmemaddr
+add wave -noupdate /system_tb/DUT/CPU/dcif/dmemload
+add wave -noupdate /system_tb/DUT/CPU/dcif/dhit
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {948922 ps} 0}
+WaveRestoreCursors {{Cursor 1} {116321 ps} 0}
 quietly wave cursor active 1
-configure wave -namecolwidth 145
-configure wave -valuecolwidth 200
+configure wave -namecolwidth 141
+configure wave -valuecolwidth 88
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
 configure wave -snapdistance 10
@@ -24,4 +32,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {573938 ps} {1164211 ps}
+WaveRestoreZoom {0 ps} {1386 ns}

@@ -4,8 +4,8 @@
 
 
 module execute(
-   logic CLK,
-   logic nRST,
+   input logic CLK,
+   input logic nRST,
    input word_t instru_ex,
    output word_t instru_ex_next,
    execute_if.ex exif
@@ -89,6 +89,9 @@ module execute(
          end
          2'd2: begin
             aif.portB = shamt;//shamt
+         end
+         default: begin
+         	aif.portB = exif.dmemstore_next;//rt
          end
       endcase
       if (exif.srcB == 1) begin

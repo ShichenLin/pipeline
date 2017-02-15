@@ -15,15 +15,15 @@ module fetch(
 		else if(pcif.pcen)
 			PC <= nxtPC;
 	end
-	reg test;
+	
 	always_comb
 	begin
-    test = 0;
 		casez(pcif.PCSrc)
 			2'd0:	nxtPC = PC + 4; //normal
 			2'd3:	nxtPC = pcif.brPC + {{14{pcif.imm[15]}}, pcif.imm, 2'b0}; //branch
 			2'd1:	nxtPC = pcif.jraddr; //jr
 			2'd2:	nxtPC = {pcif.jPC[31:28], pcif.jaddr, 2'b0}; //j
+			default:nxtPC = PC + 4;
 		endcase
 	end
 

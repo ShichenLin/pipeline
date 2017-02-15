@@ -56,7 +56,7 @@ import cpu_types_pkg::*;
       
       //mem
       if (fuif.regWr_me == 1) begin //change
-         if (fuif.rs_ex == fuif.regDst_me && fuif.dWEN_ex == 0) begin // change 2/14/5:20
+         if (fuif.rs_ex == fuif.regDst_me) begin // change 2/14/5:20
             casez(fuif.regSel_me)
                2'b00: fuif.forA_ex = fuif.ALUOut_me;
                2'b01: fuif.forA_ex = fuif.npc_me;
