@@ -19,8 +19,8 @@ module fetch(
 	always_comb
 	begin
 		casez(pcif.PCSrc)
-			2'd0:	nxtPC = PC + 4; //normal
-			2'd3:	nxtPC = pcif.brPC + {{14{pcif.imm[15]}}, pcif.imm, 2'b0}; //branch
+			2'd0:	nxtPC = pcif.psel ? pcif.pPC : PC + 4; //normal
+			2'd3:	nxtPC = pcif.braddr; //branch
 			2'd1:	nxtPC = pcif.jraddr; //jr
 			2'd2:	nxtPC = {pcif.jPC[31:28], pcif.jaddr, 2'b0}; //j
 			default:nxtPC = PC + 4;

@@ -6,15 +6,15 @@ import cpu_types_pkg::*;
 
 interface fetch_if;
    logic [25:0] jaddr;
-   logic [15:0] imm;
    logic [2:0] PCSrc;
    word_t imemaddr;
-   word_t nPC, jPC, brPC;
+   word_t nPC, jPC, braddr, pPC;
    word_t jraddr;
    logic pcen;
+   logic psel; //predictor select
 
    modport pc (
-      input jaddr, jraddr, imm, PCSrc, pcen, jPC, brPC,
+      input jaddr, jraddr, braddr, pPC, PCSrc, pcen, jPC, brPC, psel
       output imemaddr, nPC
    );
 

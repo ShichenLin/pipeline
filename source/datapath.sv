@@ -34,6 +34,7 @@ module datapath (
 	memory_if meif();
 	write_back_if wbif();
   	forwarding_unit_if fuif();
+  	branch_predictor_if bpif();
   	
 	// instrution flow
   	word_t instru_ex, instru_ex_next,
@@ -50,7 +51,7 @@ module datapath (
 	memory me (CLK, nRST, instru_me, instru_me_next, meif);
 	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
   	forwarding_unit fu (fuif);
-  	
+  	branch_predictor bp (bpif);
   	
 	//forward_unit
 	assign fuif.instru_de = deif.instr;
@@ -80,7 +81,6 @@ module datapath (
   	assign fuif.regDst_wb = wbif.wsel;
   	assign fuif.regWr_wb = wbif.WEN;
 
-
 	//datapath
 	assign dpif.imemaddr = pcif.imemaddr;
 	assign dpif.dmemaddr = meif.ALUOut_next;
@@ -90,6 +90,13 @@ module datapath (
   	assign dpif.dmemstore = meif.dmemstore_next;
 	assign dpif.halt = meif.halt_next;
 
+	//branch_predictor
+	assign bpif.PC = pcif.imemaddr;
+	assign bpif.br = huif.br;
+	assign bpif.br_result = huif.br_result;
+	assign bpif.braddr = huif.braddr;
+	assign bpif.brPC = exif.nPC_next;
+	
 	//hazard unit
 	assign huif.ihit = dpif.ihit;
 	assign huif.dhit = dpif.dhit;
@@ -102,16 +109,21 @@ module datapath (
 	assign huif.merdst = meif.regDst_next;
 	assign huif.PCSrc = deif.PCSrc;
 	assign huif.equal = exif.equal;
+	assign huif.imm = exif.brimm_next;
+	assign huif.nPC = exif.nPC_next;
+	assign huif.taken = bpif.taken;
 	
 	//fetch
 	assign pcif.brPC = exif.nPC_next;
+	assign pcif.braddr = huif.braddr;
 	assign pcif.jPC = deif.jPC;
 	assign pcif.jaddr = deif.instr[25:0];
 	assign pcif.jraddr = fuif.jrForwarding_fe ? fuif.jraddr_fe : deif.rdat1_next;
-	assign pcif.imm = exif.brimm_next;
 	assign pcif.PCSrc = huif.PCSel;
 	assign pcif.pcen = huif.pcen;
-
+	assign pcif.psel = huif.select;
+	assign pcif.pPC = nxtPC;
+	
 	//decode
 	assign deif.PC = pcif.imemaddr;
 	assign deif.instru = dpif.imemload;
