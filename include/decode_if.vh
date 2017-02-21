@@ -9,6 +9,7 @@ interface decode_if;
    word_t nPC, nPC_next;
    word_t PC, jPC;
    logic [25:0] jaddr;
+   logic br_taken, br_taken_next;
    //decode inputs
    word_t instru, instr;
    logic deen;
@@ -33,10 +34,10 @@ interface decode_if;
    logic halt;
 
    modport de (
-      input nPC, deen, instru, WEN, wdat, wsel, flush, PC,
+      input nPC, deen, instru, WEN, wdat, wsel, flush, PC, br_taken,
       output nPC_next, instr, jPC, jaddr, dWEN_next, dREN_next, regWr_next, regSel_next,
 			regDst_next, ALUOp_next, ALUSrc_next, rdat1_next, rdat2_next,
-			imm, brimm, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt
+			imm, brimm, PCSrc, shamt_next, lui_next, rt_next, rs_next, halt, br_taken_next
    );
 
 

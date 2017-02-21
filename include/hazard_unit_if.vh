@@ -13,14 +13,15 @@ interface hazard_unit_if;
 	logic [1:0] PCSel;
 	logic equal;
 	word_t nPC, braddr;
-	logic br, br_result, taken;
+	logic br, br_result, br_taken;
+	
 	//enable signals
 	logic pcen, deen, exen, meen, wben;
 	//flush signals
 	logic deflush, exflush, meflush;
 	
 	modport hu (
-		input ihit, dhit, meldst, rs, rt, exREN, exWEN, exrdst, merdst, PCSrc, equal, imm, nPC, taken,
+		input ihit, dhit, meldst, rs, rt, exREN, exWEN, exrdst, merdst, PCSrc, equal, imm, nPC, br_taken,
 		output pcen, deen, exen, meen, wben,
 			   deflush, exflush, meflush,
 			   PCSel, braddr, br, br_result

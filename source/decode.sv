@@ -48,18 +48,21 @@ module decode(
 			deif.nPC_next <= 0;
 			deif.instr <= 0;
 			deif.jPC <= 0;
+			deif.br_taken_next <= 0;
 		end
 		else if(deif.flush)
 		begin
 			deif.nPC_next <= 0;
 			deif.instr <= 0;
 			deif.jPC <= 0;
+			deif.br_taken_next <= 0;
 		end
 		else if(deif.deen)
 		begin
 			deif.nPC_next <= deif.nPC;
 			deif.instr <= deif.instru;
 			deif.jPC <= deif.PC;
+			deif.br_taken_next <= deif.br_taken;
 		end
 	end
 endmodule

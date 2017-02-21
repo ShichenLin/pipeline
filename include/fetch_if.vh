@@ -14,7 +14,7 @@ interface fetch_if;
    logic psel; //predictor select
 
    modport pc (
-      input jaddr, jraddr, braddr, pPC, PCSrc, pcen, jPC, brPC, psel
+      input jaddr, jraddr, braddr, pPC, PCSrc, pcen, jPC, psel,
       output imemaddr, nPC
    );
 

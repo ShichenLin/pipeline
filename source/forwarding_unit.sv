@@ -43,7 +43,7 @@ import cpu_types_pkg::*;
       fuif.srcDmemstore_ex = 0;
       
       //write_back
-      if (fuif.regWr_wb == 1 && fuif.dWEN_ex == 0) begin
+      if (fuif.regWr_wb == 1) begin
          if (fuif.rs_ex == fuif.regDst_wb) begin
              fuif.forA_ex = fuif.wdat_wb;
              fuif.srcA_ex = 1;

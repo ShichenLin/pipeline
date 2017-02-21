@@ -51,13 +51,12 @@ module datapath (
 	memory me (CLK, nRST, instru_me, instru_me_next, meif);
 	write_back wb (CLK, nRST, instru_wb, instru_wb_next, wbif);
   	forwarding_unit fu (fuif);
-  	branch_predictor bp (bpif);
+  	branch_predictor bp (CLK, nRST, bpif);
   	
 	//forward_unit
 	assign fuif.instru_de = deif.instr;
 	assign fuif.regWr_de = deif.regWr_next;
 	assign fuif.regSel_de = deif.regSel_next;
-
 	assign fuif.ALUOut_ex = exif.ALUOut_next;
   	assign fuif.lui_ex = exif.lui_next;
   	assign fuif.npc_ex = exif.nPC_next;
@@ -68,7 +67,6 @@ module datapath (
   	assign fuif.regSel_ex = exif.regSel_next;
   	assign fuif.dWEN_ex = exif.dWEN_next;
   	assign fuif.ALUSrc_ex = exif.ALUSrc_next;
-
   	assign fuif.ALUOut_me = meif.ALUOut_next;
   	assign fuif.lui_me = meif.lui_next;
   	assign fuif.npc_me = meif.nPC_next;
@@ -76,7 +74,6 @@ module datapath (
   	assign fuif.regDst_me = meif.regDst_next;
   	assign fuif.regWr_me = meif.regWr_next;
   	assign fuif.regSel_me = meif.regSel_next;
-
   	assign fuif.wdat_wb = wbif.wdat;
   	assign fuif.regDst_wb = wbif.wsel;
   	assign fuif.regWr_wb = wbif.WEN;
@@ -95,7 +92,7 @@ module datapath (
 	assign bpif.br = huif.br;
 	assign bpif.br_result = huif.br_result;
 	assign bpif.braddr = huif.braddr;
-	assign bpif.brPC = exif.nPC_next;
+	assign bpif.brPC = exif.nPC_next - 4;
 	
 	//hazard unit
 	assign huif.ihit = dpif.ihit;
@@ -111,18 +108,17 @@ module datapath (
 	assign huif.equal = exif.equal;
 	assign huif.imm = exif.brimm_next;
 	assign huif.nPC = exif.nPC_next;
-	assign huif.taken = bpif.taken;
+	assign huif.br_taken = deif.br_taken_next;
 	
 	//fetch
-	assign pcif.brPC = exif.nPC_next;
 	assign pcif.braddr = huif.braddr;
 	assign pcif.jPC = deif.jPC;
 	assign pcif.jaddr = deif.instr[25:0];
 	assign pcif.jraddr = fuif.jrForwarding_fe ? fuif.jraddr_fe : deif.rdat1_next;
 	assign pcif.PCSrc = huif.PCSel;
 	assign pcif.pcen = huif.pcen;
-	assign pcif.psel = huif.select;
-	assign pcif.pPC = nxtPC;
+	assign pcif.psel = bpif.select;
+	assign pcif.pPC = bpif.nxtPC;
 	
 	//decode
 	assign deif.PC = pcif.imemaddr;
@@ -133,6 +129,7 @@ module datapath (
 	assign deif.wsel = wbif.wsel;
 	assign deif.flush = huif.deflush;
 	assign deif.deen = huif.deen;
+	assign deif.br_taken = bpif.taken;
 	
 	//execute
 	assign exif.brimm = deif.brimm;
