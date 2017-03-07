@@ -18,7 +18,8 @@ module dcache(
 	logic dirty_blk, nxt_dirty_blk;
 	
 	assign addr = dcif.dmemaddr;
-
+	assign dcif.flushed = dcif.halt;
+	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
 		if(~nRST)
@@ -40,7 +41,7 @@ module dcache(
 
 	always_comb
 	begin
-		nxt_dirty_blk = 0;
+		nxt_dirty_blk = dirty_blk;
 		nxt_flushed_frame = flushed_frame;
 		next_dcache = dcache;
 		nxtstate = state;
@@ -52,7 +53,6 @@ module dcache(
     	cif.cctrans = 0;
     	dcif.dmemload = 0;
     	dcif.dhit = 0;
-    	dcif.flushed = 0;
 		case (state)
 			DCHECK_HIT : begin
 				if (dcif.halt) begin
@@ -168,7 +168,7 @@ module dcache(
 			FLUSH1 : begin
 				cif.dWEN = 1;
 				cif.dstore = dcache[flushed_frame].dblk[dirty_blk].dword[0];
-				cif.daddr = {dcache[flushed_frame], flushed_frame, 3'b000};
+				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame, 3'b000};
 				if (~cif.dwait) begin
 					nxtstate = FLUSH2;
 				end
@@ -176,7 +176,7 @@ module dcache(
 			FLUSH2 : begin
 				cif.dWEN = 1;
 				cif.dstore = dcache[flushed_frame].dblk[dirty_blk].dword[1];
-				cif.daddr = {dcache[flushed_frame], flushed_frame, 3'b100};
+				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame, 3'b100};
 				if (~cif.dwait) begin
 					next_dcache[flushed_frame].dblk[dirty_blk].dirty = 0;
 					nxtstate = FLUSH;

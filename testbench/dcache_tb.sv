@@ -28,7 +28,7 @@ program test(
 	output logic nRST, halt, dmemREN, dmemWEN, dwait,
 		   cpu_types_pkg::word_t dmemaddr, dmemstore, dload
 );
-	integer i;
+	integer i = 0;
 	
 	initial
 	begin
@@ -125,13 +125,13 @@ program test(
 			$display("Wrong Case 2.1");
 			$finish;
 		end
-		dmemREN = 0;		
+		@(posedge CLK) dmemREN = 0;		
 		
 		//conflict load miss
 		dmemaddr = 32'h80;
 		@(posedge CLK) dmemREN = 1; //CHECK_HIT
 		@(posedge CLK) //MISS_DIRTY1
-		@(negedge CLK) if(~dWEN)// || daddr != 32'h0 || dstore != 32'd20)
+		@(negedge CLK) if(~dWEN || daddr != 32'h0 || dstore != 32'd20)
 		begin	
 			$display("Wrong Case 4.1");
 			$finish;
@@ -145,7 +145,7 @@ program test(
 		end
 		@(posedge CLK) dwait = 0;
 		@(posedge CLK) dwait = 1; //MISS1
-		@(negedge CLK) if(~dREN || daddr == 32'h80)
+		@(negedge CLK) if(~dREN || daddr != 32'h80)
 		begin	
 			$display("Wrong Case 4.3");
 			$finish;
@@ -153,7 +153,7 @@ program test(
 		@(posedge CLK) dload = 32'd21;
 		dwait = 0;
 		@(posedge CLK) dwait = 0; //MISS2
-		@(negedge CLK) if(~dREN || daddr == 32'h84)
+		@(negedge CLK) if(~dREN || daddr != 32'h84)
 		begin	
 			$display("Wrong Case 4.4");
 			$finish;
@@ -178,7 +178,7 @@ program test(
 		dmemstore = 32'd10;
 		@(posedge CLK) dmemWEN = 1; //DCHECK_HIT
 		@(posedge CLK); //MISS1
-		@(negedge CLK) if(~dREN || daddr == 32'h0) 
+		@(negedge CLK) if(~dREN || daddr != 32'h0) 
 		begin	
 			$display("Wrong Case 5.1");
 			$finish;
@@ -186,14 +186,14 @@ program test(
 		@(posedge CLK) dload = 32'd20;
 		dwait = 0;
 		@(posedge CLK) dwait = 1; //MISS2
-		@(negedge CLK) if(~dREN || daddr == 32'h4)
+		@(negedge CLK) if(~dREN || daddr != 32'h4)
 		begin	
 			$display("Wrong Case 5.2");
 			$finish;
 		end
 		@(posedge CLK) dload = 32'd14;
 		dwait = 0;
-		@(posedge CLK) dwait = 1; //DCHECK_HIT
+		@(posedge CLK) dwait = 1; //MISS_HIT
 		dmemWEN = 0;
 		dmemREN = 1;
 		@(negedge CLK) if(~dhit || dmemload != 32'd10)
@@ -205,43 +205,43 @@ program test(
 		
 		//halt	
 		@(posedge CLK) halt = 1;
-		@(posedge CLK); //FLUSH
-		@(posedge CLK); //FLUSH1
-		@(negedge CLK) if(~dWEN || dstore != 32'd10 || daddr != 32'h0)
+		@(negedge CLK) if(~dcif.flushed)
 		begin	
 			$display("Wrong Case 6.1");
 			$finish;
 		end
-		@(posedge CLK) dwait = 0;
-		@(posedge CLK) dwait = 1; //FLUSH2
-		@(negedge CLK) if(~dWEN || dstore != 32'd10 || daddr != 32'h4)
+		@(posedge CLK); //FLUSH
+		@(posedge CLK); //FLUSH1
+		@(negedge CLK) if(~dWEN || dstore != 32'd10 || daddr != 32'h0)
 		begin	
 			$display("Wrong Case 6.2");
 			$finish;
 		end
 		@(posedge CLK) dwait = 0;
+		@(posedge CLK) dwait = 1; //FLUSH2
+		@(negedge CLK) if(~dWEN || dstore != 32'd14 || daddr != 32'h4)
+		begin	
+			$display("Wrong Case 6.3");
+			$finish;
+		end
+		@(posedge CLK) dwait = 0;
 		@(posedge CLK) dwait = 1;
-		while(~dWEN && i < 1000) //wait for SAVE_COUNT
+		@(negedge CLK) while(~dWEN && i < 1000) //wait for SAVE_COUNT
 		begin
 			@(posedge CLK) i++;
 		end
 		if(i == 1000)
 		begin	
-			$display("Wrong Case 6.3");
-			$finish;
-		end
-		if(dstore != 32'd3 || daddr != 32'h3100)
-		begin	
 			$display("Wrong Case 6.4");
 			$finish;
 		end
-		@(posedge CLK) dwait = 0;
-		@(posedge CLK) dwait = 1;
-		if(~dcif.flushed)
+		@(negedge CLK) if(dstore != 32'd3 || daddr != 32'h3100)
 		begin	
 			$display("Wrong Case 6.5");
 			$finish;
 		end
+		@(posedge CLK) dwait = 0;
+		@(posedge CLK) dwait = 1;
 		
 		$display("All cases pass");
 	end
