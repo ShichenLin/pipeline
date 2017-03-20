@@ -11,7 +11,6 @@ module caches (
 	caches_if cif
 );
 
-	caches_if cif0, cif1
 	// icache
 	icache  ICACHE (CLK, nRST, dcif, cif);
 	// dcache

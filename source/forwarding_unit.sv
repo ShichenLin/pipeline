@@ -61,7 +61,7 @@ import cpu_types_pkg::*;
                2'b00: fuif.forA_ex = fuif.ALUOut_me;
                2'b01: fuif.forA_ex = fuif.npc_me;
                2'b10: fuif.forA_ex = fuif.lui_me;
-               //2'b11: fuif.forA_ex = fuif.dmemload_me;
+               2'b11: fuif.forA_ex = fuif.dmemload_me;
             endcase
             fuif.srcA_ex = 1;
          end
@@ -70,7 +70,7 @@ import cpu_types_pkg::*;
                2'b00: fuif.forB_ex = fuif.ALUOut_me;
                2'b01: fuif.forB_ex = fuif.npc_me;
                2'b10: fuif.forB_ex = fuif.lui_me;
-             //  2'b11: fuif.forB_ex = fuif.dmemload_me;
+               2'b11: fuif.forB_ex = fuif.dmemload_me;
             endcase
             fuif.srcB_ex = 1;
          end

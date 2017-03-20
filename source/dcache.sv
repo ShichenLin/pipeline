@@ -18,7 +18,7 @@ module dcache(
 	logic dirty_blk, nxt_dirty_blk;
 	
 	assign addr = dcif.dmemaddr;
-	assign dcif.flushed = dcif.halt;
+	//assign dcif.flushed = dcif.halt;   //hex Mar18 17:52
 	
 	always_ff @ (posedge CLK, negedge nRST)
 	begin
@@ -41,10 +41,12 @@ module dcache(
 
 	always_comb
 	begin
+        nxtcount = count; // hex Mar18 17:52
 		nxt_dirty_blk = dirty_blk;
 		nxt_flushed_frame = flushed_frame;
 		next_dcache = dcache;
 		nxtstate = state;
+        dcif.flushed = 0;
     	cif.daddr = 0;
     	cif.dREN = 0;
     	cif.dWEN = 0;
@@ -80,10 +82,12 @@ module dcache(
 						nxtcount = count + 1;
 						next_dcache[addr.idx].lru = 1;
 						next_dcache[addr.idx].dblk[0].dirty = 1;
+						dcif.dhit = 1;  //change Mar18 5:25
 						next_dcache[addr.idx].dblk[0].dword[addr.blkoff] = dcif.dmemstore;
 					end else if (dcache[addr.idx].dblk[1].valid && dcache[addr.idx].dblk[1].dtag == addr.tag) begin
 						nxtcount = count + 1;
-						next_dcache[addr.idx].lru = 0;
+				                dcif.dhit = 1;	//change Mar18 5:25				
+                                                next_dcache[addr.idx].lru = 0;
 						next_dcache[addr.idx].dblk[1].dirty = 1;
 						next_dcache[addr.idx].dblk[1].dword[addr.blkoff] = dcif.dmemstore;
 					end else begin
@@ -168,7 +172,7 @@ module dcache(
 			FLUSH1 : begin
 				cif.dWEN = 1;
 				cif.dstore = dcache[flushed_frame].dblk[dirty_blk].dword[0];
-				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame, 3'b000};
+				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame[2:0], 3'b000};
 				if (~cif.dwait) begin
 					nxtstate = FLUSH2;
 				end
@@ -176,7 +180,7 @@ module dcache(
 			FLUSH2 : begin
 				cif.dWEN = 1;
 				cif.dstore = dcache[flushed_frame].dblk[dirty_blk].dword[1];
-				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame, 3'b100};
+				cif.daddr = {dcache[flushed_frame].dblk[dirty_blk].dtag, flushed_frame[2:0], 3'b100};
 				if (~cif.dwait) begin
 					next_dcache[flushed_frame].dblk[dirty_blk].dirty = 0;
 					nxtstate = FLUSH;
@@ -191,7 +195,11 @@ module dcache(
 				end
 			end
 			FLUSHED : begin
-				if(~dcif.halt) nxtstate = DCHECK_HIT;
+				if(~dcif.halt) begin 
+  					nxtstate = DCHECK_HIT;
+				end else begin
+       				 	dcif.flushed = 1;  //hex Mar18 17:52
+				end
 			end	
 		endcase
 	end
