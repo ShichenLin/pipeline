@@ -90,6 +90,7 @@ module control_unit(
 			end
 			SLTIU: begin
 				cuif.RegWr = 1;
+				cuif.ExtOp = 1;
 				cuif.ALUSrc = 2'd1;//imm
 				cuif.ALUOp = ALU_SLTU;
 				cuif.RegDst = rt;
@@ -118,6 +119,7 @@ module control_unit(
 				cuif.RegDst = rt;
 			end
 			LW: begin
+				cuif.ExtOp = 1;
 				cuif.RegDst = rt;
 				cuif.RegWr = 1;
 				cuif.RegSel = 2'd3;//data load
@@ -126,6 +128,7 @@ module control_unit(
 				cuif.dREN = 1;
 			end
 			SW: begin
+				cuif.ExtOp = 1;
 				cuif.ALUSrc = 2'd1;//imm;
 				cuif.ALUOp = ALU_ADD;
 				cuif.dWEN = 1;

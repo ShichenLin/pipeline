@@ -86,8 +86,8 @@ module dcache(
 						next_dcache[addr.idx].dblk[0].dword[addr.blkoff] = dcif.dmemstore;
 					end else if (dcache[addr.idx].dblk[1].valid && dcache[addr.idx].dblk[1].dtag == addr.tag) begin
 						nxtcount = count + 1;
-				                dcif.dhit = 1;	//change Mar18 5:25				
-                                                next_dcache[addr.idx].lru = 0;
+				        dcif.dhit = 1;	//change Mar18 5:25				
+                        next_dcache[addr.idx].lru = 0;
 						next_dcache[addr.idx].dblk[1].dirty = 1;
 						next_dcache[addr.idx].dblk[1].dword[addr.blkoff] = dcif.dmemstore;
 					end else begin

@@ -27,26 +27,19 @@ module hazard_unit(
 		end
 	end
 
+	assign huif.br = (R_PCSrc == 3 || R_PCSrc == 4) ? huif.ihit : 0;
+	assign huif.br_result = ((R_PCSrc == 3'd3 && huif.equal) || (R_PCSrc == 3'd4 && ~huif.equal)) ? huif.ihit : 0;
+	
 	always_comb
 	begin
 		huif.deflush = 0;
 		huif.exflush = 0;
 		huif.meflush = 0;
 		huif.PCSel = 2'd0;
-		huif.br = 0;
-		huif.br_result = 0;
 		huif.braddr = 0;
-		if(huif.meldst)
+		if(huif.meldst && (~huif.ihit || ~huif.dhit)) //when either ihit or dhit is not asserted during load or store, stall pipe
 		begin
-			if(huif.ihit && huif.dhit) //move pipe forward
-			begin
-				huif.pcen = huif.ihit;
-				huif.deen = huif.ihit;
-				huif.exen = huif.ihit;
-				huif.meen = huif.ihit;
-				huif.wben = huif.ihit;
-			end
-			else if(~huif.ihit && huif.dhit) //stall before mem
+			if(huif.dhit) //stall before mem
 			begin
 				huif.pcen = 0;
 				huif.deen = 0;
@@ -54,14 +47,6 @@ module hazard_unit(
 				huif.meen = 0;
 				huif.wben = huif.dhit;
 				huif.meflush = huif.dhit;
-			end
-			else if(huif.ihit && ~huif.dhit) //stall pipe
-			begin
-				huif.pcen = 0;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.meen = 0;
-				huif.wben = 0;
 			end
 			else begin //stall pipe
 				huif.pcen = 0;
@@ -80,90 +65,65 @@ module hazard_unit(
 			huif.wben = huif.ihit;
 			huif.exflush = huif.ihit;
 		end
-		else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw/sw followed by a dependent jr
+		else if(huif.exREN && huif.exrdst == 5'd31 && huif.PCSrc == 3'd1) //lw followed by a dependent jr
 		begin
-			huif.pcen = 0;
+			huif.PCSel = 2'd3;
+			huif.braddr = huif.nPC;
+			huif.pcen = huif.ihit;
 			huif.deen = 0;
 			huif.exen = 0;
 			huif.meen = huif.ihit;
 			huif.wben = huif.ihit;
 			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
-		else if(R_PCSrc == 3'd3 && huif.equal) //beq taken
+		else if(R_PCSrc == 3'd3 && huif.equal && ~br_taken) //beq taken but predict not taken
 		begin
-			huif.br = huif.ihit;
-			huif.br_result = huif.ihit;
+			huif.braddr = huif.nPC + {{14{huif.imm[15]}}, huif.imm, 2'b0};
+			huif.PCSel = 2'd3;
 			huif.pcen = huif.ihit;
-			huif.deen = huif.ihit;
-			huif.exen = huif.ihit;
+			huif.deen = 0;
+			huif.exen = 0;
 			huif.meen = huif.ihit;
 			huif.wben = huif.ihit;
-			if(~br_taken)
-			begin
-				huif.braddr = huif.nPC + {{14{huif.imm[15]}}, huif.imm, 2'b0};
-				huif.PCSel = 2'd3;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.exflush = huif.ihit;
-				huif.deflush = huif.ihit;
-			end
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
-		else if(R_PCSrc == 3'd3 && ~huif.equal) //beq not taken
+		else if(R_PCSrc == 3'd3 && ~huif.equal && br_taken) //beq not taken but predict taken
 		begin
-			huif.br = huif.ihit;
-			huif.br_result = 0;
+			huif.braddr = huif.nPC;
+			huif.PCSel = 2'd3;
 			huif.pcen = huif.ihit;
-			huif.deen = huif.ihit;
-			huif.exen = huif.ihit;
+			huif.deen = 0;
+			huif.exen = 0;
 			huif.meen = huif.ihit;
 			huif.wben = huif.ihit;
-			if(br_taken)
-			begin
-				huif.braddr = huif.nPC;
-				huif.PCSel = 2'd3;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.exflush = huif.ihit;
-				huif.deflush = huif.ihit;
-			end
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
-		else if(R_PCSrc == 3'd4 && ~huif.equal) //bne taken
+		else if(R_PCSrc == 3'd4 && ~huif.equal && ~br_taken) //bne taken but predict not taken
 		begin
-			huif.br = huif.ihit;
-			huif.br_result = huif.ihit;
+			huif.braddr = huif.nPC + {{14{huif.imm[15]}}, huif.imm, 2'b0};
+			huif.PCSel = 2'd3;
 			huif.pcen = huif.ihit;
-			huif.deen = huif.ihit;
-			huif.exen = huif.ihit;
+			huif.deen = 0;
+			huif.exen = 0;
 			huif.meen = huif.ihit;
 			huif.wben = huif.ihit;
-			if(~br_taken)
-			begin
-				huif.braddr = huif.nPC + {{14{huif.imm[15]}}, huif.imm, 2'b0};
-				huif.PCSel = 2'd3;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.exflush = huif.ihit;
-				huif.deflush = huif.ihit;
-			end
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
-		else if(R_PCSrc == 3'd4 && huif.equal) //bne not taken
+		else if(R_PCSrc == 3'd4 && huif.equal && br_taken) //bne not taken but predict taken
 		begin
-			huif.br = huif.ihit;
-			huif.br_result = 0;
+			huif.braddr = huif.nPC;
+			huif.PCSel = 2'd3;
 			huif.pcen = huif.ihit;
-			huif.deen = huif.ihit;
-			huif.exen = huif.ihit;
+			huif.deen = 0;
+			huif.exen = 0;
 			huif.meen = huif.ihit;
 			huif.wben = huif.ihit;
-			if(br_taken)
-			begin
-				huif.braddr = huif.nPC;
-				huif.PCSel = 2'd3;
-				huif.deen = 0;
-				huif.exen = 0;
-				huif.exflush = huif.ihit;
-				huif.deflush = huif.ihit;
-			end
+			huif.exflush = huif.ihit;
+			huif.deflush = huif.ihit;
 		end
 		else if(huif.PCSrc == 3'd2) //j-type instruction
 		begin
