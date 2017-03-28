@@ -152,7 +152,7 @@ module coh_ctrl (
       end
       data_cache_xfer : begin //read from the other cache
         ccif.ramWEN = ccif.dWEN[!req];
-        ccif.ramaddr = ccif.daddr[!req];
+        ccif.ramaddr = ccif.daddr[req];
         ccif.ramstore = ccif.dstore[!req];
         ccif.dload[req] = ccif.dstore[!req];
         ccif.ccsnoopaddr[!req] = ccif.daddr[req];
