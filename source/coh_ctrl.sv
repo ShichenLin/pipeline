@@ -12,7 +12,7 @@
 // memory types
 `include "cpu_types_pkg.vh"
 
-module memory_control (
+module coh_ctrl (
 
   input CLK, nRST,
   cache_control_if.cc ccif
@@ -37,7 +37,7 @@ module memory_control (
 
   always_ff @(posedge CLK, negedge nRST) begin
     if (nRST == 0) begin
-      state <= request;
+      state <= idle;
     end else begin
       state <= next_state;
     end
@@ -63,7 +63,7 @@ module memory_control (
         end
       end
       snooping : begin
-        if (ccif.trans) begin
+        if (!ccif.cctrans) begin
           next_state = idle;
         end else begin
           next_state = ccif.ccwrite[!req] ? data_cache_xfer : data_ram_xfer;  //update from another cache if it returns write back; otherwise update from RAM
@@ -148,7 +148,7 @@ module memory_control (
       snooping : begin
         ccif.ccsnoopaddr[!req] = ccif.daddr[req];
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.trans != 0;
+        ccif.ccwait[!req] = ccif.cctrans != 0;
       end
       data_cache_xfer : begin //read from the other cache
         ccif.ramWEN = ccif.dWEN[!req];
@@ -158,7 +158,7 @@ module memory_control (
         ccif.ccsnoopaddr[!req] = ccif.daddr[req];
         ccif.dwait = (ccif.ramstate != ACCESS) ? 2'b11 : 2'b00;
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.trans != 0;
+        ccif.ccwait[!req] = ccif.cctrans != 0;
       end
       data_ram_xfer: begin //read from RAM
         ccif.dload[req] = ccif.ramload;
@@ -167,7 +167,7 @@ module memory_control (
         ccif.ramaddr = ccif.daddr[req];
         ccif.dwait[req] = (ccif.ramstate != ACCESS);
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.trans != 0;
+        ccif.ccwait[!req] = ccif.cctrans != 0;
       end
     endcase
 
