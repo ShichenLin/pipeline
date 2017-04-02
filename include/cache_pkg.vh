@@ -40,7 +40,10 @@ typedef enum logic [4:0] {
 	FLUSH1,
 	FLUSH2,
 	SAVE_COUNT,
-	FLUSHED
+	FLUSHED,
+	SNOOPING,
+	DATA_XFER1,
+	DATA_XFER2
 } dstate_t;
 
 endpackage
