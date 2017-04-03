@@ -14,5 +14,5 @@ module memory_control (
   	cache_control_if ccif
 );
 
-  	coh_ctrl coc (ccif);
+  	coh_ctrl coc (CLK, nRST, ccif);
 endmodule

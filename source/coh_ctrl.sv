@@ -65,20 +65,27 @@ module coh_ctrl (
       snooping : begin
         if (!ccif.cctrans) begin
           next_state = idle;
-        end else begin
-          next_state = ccif.ccwrite[!req] ? data_cache_xfer : data_ram_xfer;  //update from another cache if it returns write back; otherwise update from RAM
-        end
+        end else begin      
+          if (ccif.ccwrite[!req]) begin
+            next_state = data_cache_xfer;
+          end else begin  
+            next_state = data_ram_xfer;  //update from another cache if it returns write back; otherwise update from RAM
+          end
+        end 
       end
       data_cache_xfer : begin //update from the other cache
-        if (!ccif.cctrans) begin
+        if (!ccif.cctrans[req]) begin
            next_state = idle;
         end
       end
       data_ram_xfer : begin //update from RAM
-         if (!ccif.cctrans) begin
+         if (!ccif.cctrans[req]) begin
            next_state = idle;
          end
       end
+      default : begin
+	next_state = idle;
+      end 
     endcase
   end
 
@@ -110,7 +117,7 @@ module coh_ctrl (
             ccif.ramaddr = ccif.daddr[0];
             ccif.ramstore = ccif.dstore[0];
             ccif.dwait[0] = ccif.ramstate != ACCESS;
-          end else if (ccif.dREN == 2'b10) begin
+          end else if (ccif.dWEN == 2'b10) begin // change Where is read?
             ccif.ramWEN = 1;
             ccif.ramaddr = ccif.daddr[1];
             ccif.ramstore = ccif.dstore[1];
@@ -118,7 +125,7 @@ module coh_ctrl (
           end else if (ccif.iREN == 2'b11) begin
             ccif.ramREN = 1;
             ccif.ramaddr = ccif.iaddr[ilru];
-            if (ccif.ramstate != ACCESS) begin
+            if (ccif.ramstate == ACCESS) begin
               ccif.iwait[ilru] = 0;
               ccif.iload[ilru] = ccif.ramload;
               next_ilru = ~ilru;
@@ -126,7 +133,7 @@ module coh_ctrl (
           end else if (ccif.iREN == 2'b01) begin
             ccif.ramREN = 1;
             ccif.ramaddr = ccif.iaddr[0];
-            if (ccif.ramstate != ACCESS) begin
+            if (ccif.ramstate == ACCESS) begin // change
               ccif.iwait[0] = 0;
               ccif.iload[0] = ccif.ramload;
               next_ilru = 1;
@@ -134,10 +141,10 @@ module coh_ctrl (
           end else if (ccif.iREN == 2'b10) begin
             ccif.ramREN = 1;
             ccif.ramaddr = ccif.iaddr[1];
-            if (ccif.ramstate != ACCESS) begin
+            if (ccif.ramstate == ACCESS) begin// change 
               ccif.iwait[1] = 0;
               ccif.iload[1] = ccif.ramload;
-              next_ilru = 1;
+              next_ilru = 0; // change
             end
           end
         end else begin

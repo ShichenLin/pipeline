@@ -226,22 +226,6 @@ program test(
 		end
 		@(posedge CLK) dwait = 0;
 		@(posedge CLK) dwait = 1;
-		@(negedge CLK) while(~dWEN && i < 1000) //wait for SAVE_COUNT
-		begin
-			@(posedge CLK) i++;
-		end
-		if(i == 1000)
-		begin	
-			$display("Wrong Case 6.4");
-			$finish;
-		end
-		@(negedge CLK) if(dstore != 32'd3 || daddr != 32'h3100)
-		begin	
-			$display("Wrong Case 6.5");
-			$finish;
-		end
-		@(posedge CLK) dwait = 0;
-		@(posedge CLK) dwait = 1;
 		
 		$display("All cases pass");
 	end

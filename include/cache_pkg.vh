@@ -43,7 +43,8 @@ typedef enum logic [4:0] {
 	FLUSHED,
 	SNOOPING,
 	DATA_XFER1,
-	DATA_XFER2
+	DATA_XFER2,
+        YF
 } dstate_t;
 
 endpackage
