@@ -78,15 +78,13 @@ module dcache(
 						end
 					end
 				end else if (dcif.dmemWEN) begin
-					if (dcache[addr.idx].dblk[0].valid && dcache[addr.idx].dblk[0].dtag == addr.tag && dcache[addr.idx].dblk[0].dirty) begin//change
+					if (dcache[addr.idx].dblk[0].valid && dcache[addr.idx].dblk[0].dtag == addr.tag && dcache[addr.idx].dblk[0].dirty) begin //write hit and current state is modified
 						next_dcache[addr.idx].lru = 1;
-						next_dcache[addr.idx].dblk[0].dirty = 1;
 						dcif.dhit = 1;  //change Mar18 5:25
 						next_dcache[addr.idx].dblk[0].dword[addr.blkoff] = dcif.dmemstore;
-					end else if (dcache[addr.idx].dblk[1].valid && dcache[addr.idx].dblk[1].dtag == addr.tag &&dcache[addr.idx].dblk[1].dirty) begin // change
+					end else if (dcache[addr.idx].dblk[1].valid && dcache[addr.idx].dblk[1].dtag == addr.tag && dcache[addr.idx].dblk[1].dirty) begin //write hit and current state is modified
 						dcif.dhit = 1;	//change Mar18 5:25
 						next_dcache[addr.idx].lru = 0;
-						next_dcache[addr.idx].dblk[1].dirty = 1;
 						next_dcache[addr.idx].dblk[1].dword[addr.blkoff] = dcif.dmemstore;
 					end else begin
 						if (dcache[addr.idx].dblk[dcache[addr.idx].lru].dirty) begin
@@ -97,7 +95,7 @@ module dcache(
 						end
 					end
 				end
-  				if (cif.ccwait == 1) begin //change{
+  				if (cif.ccwait) begin //change{
 					nxt_pause_state = DCHECK_HIT;
 					nxtstate = SNOOPING;
 				end//change }
@@ -110,7 +108,7 @@ module dcache(
 					nxtstate = MISS_DIRTY2;
 				end
 				//change{
-				if (cif.ccwait == 1) begin
+				if (cif.ccwait) begin
 					nxt_pause_state = MISS_DIRTY1;
 					nxtstate = SNOOPING;
 				end
@@ -125,7 +123,7 @@ module dcache(
 					next_dcache[addr.idx].dblk[dcache[addr.idx].lru].valid = 0;//change
 					nxtstate = MISS1;
 				end// change {
-				if (cif.ccwait == 1) begin
+				if (cif.ccwait) begin
 					nxt_pause_state = MISS_DIRTY2;
 					nxtstate = SNOOPING;
 				end//change }
@@ -182,7 +180,7 @@ module dcache(
 				end else begin
 					nxtstate = FLUSHED;
 				end
-				if (cif.ccwait == 1) begin
+				if (cif.ccwait) begin
 					nxt_pause_state = FLUSH;
 					nxtstate = SNOOPING;
 				end
@@ -194,7 +192,7 @@ module dcache(
 				if (~cif.dwait) begin
 					nxtstate = FLUSH2;
 				end
-				if (cif.ccwait == 1) begin
+				if (cif.ccwait) begin
 					nxt_pause_state = FLUSH1;
 					nxtstate = SNOOPING;
 				end
@@ -207,7 +205,7 @@ module dcache(
 					next_dcache[flushed_frame].dblk[dirty_blk].dirty = 0;
 					nxtstate = FLUSH;
 				end
-				if (cif.ccwait == 1) begin
+				if (cif.ccwait) begin
 					nxt_pause_state = FLUSH2;
 					nxtstate = SNOOPING;
 				end
@@ -220,23 +218,14 @@ module dcache(
 				end
 			end
 			SNOOPING : begin
-				if (dcache[snoopaddr.idx].dblk[0].valid && snoopaddr.tag == dcache[snoopaddr.idx].dblk[0].dtag)
-					if (cif.ccwait) begin
-						nxtstate = DATA_XFER1;
-						nxt_xfer_blk = 0;
-					end else begin
-						if (cif.ccinv) next_dcache[snoopaddr.idx].dblk[0].valid = 0;
-						nxtstate = pause_state;
+				if (dcache[snoopaddr.idx].dblk[0].valid && snoopaddr.tag == dcache[snoopaddr.idx].dblk[0].dtag) begin
+					nxtstate = DATA_XFER1;
+					nxt_xfer_blk = 0;
 				end else if (dcache[snoopaddr.idx].dblk[1].valid && snoopaddr.tag == dcache[snoopaddr.idx].dblk[1].dtag) begin
-					if (cif.ccwait) begin
-						nxtstate = DATA_XFER1;
-						nxt_xfer_blk = 1;
-					end else begin
-						if (cif.ccinv) next_dcache[snoopaddr.idx].dblk[1].valid = 0;
-						nxtstate = pause_state;
-					end
+					nxtstate = DATA_XFER1;
+					nxt_xfer_blk = 1;
 				end else begin
-					if (cif.ccwait) nxtstate = pause_state;
+					if (~cif.ccwait) nxtstate = pause_state;
 				end
 			end
 			DATA_XFER1 : begin
@@ -251,24 +240,25 @@ module dcache(
 				cif.dWEN = 1;
 				if (~cif.dwait) begin
 					if (cif.ccinv) next_dcache[snoopaddr.idx].dblk[xfer_blk].valid = 0;
-					nxtstate = YF;
+					nxtstate = WAIT;
 				end
 			end
-			YF : begin 
-				nxtstate = pause_state;         
+			WAIT : begin 
+				if(~cif.ccwait) nxtstate = pause_state;         
 			end
 		endcase
 	end // change {
 	always_comb begin
 		cif.ccwrite = 0;
 		cif.cctrans = 0;
-		if (dcif.dmemWEN == 1) begin
-			if ((!dcache[addr.idx].dblk[1].dirty || dcache[addr.idx].dblk[1].dtag != addr.tag || !dcache[addr.idx].dblk[1].valid) && (!dcache[addr.idx].dblk[0].dirty || dcache[addr.idx].dblk[0].dtag != addr.tag || !dcache[addr.idx].dblk[0].valid)) begin
+		//request is deasserted at MISS_HIT state
+		if (dcif.dmemWEN) begin
+			if ((!dcache[addr.idx].dblk[1].dirty || dcache[addr.idx].dblk[1].dtag != addr.tag || !dcache[addr.idx].dblk[1].valid) && (!dcache[addr.idx].dblk[0].dirty || dcache[addr.idx].dblk[0].dtag != addr.tag || !dcache[addr.idx].dblk[0].valid)) begin //busRdx request when write is not hit or current state is not modified
 				cif.ccwrite = 1;
 				cif.cctrans = 1;
 			end
-		end else if (dcif.dmemREN == 1) begin
-			if ((!dcache[addr.idx].dblk[1].valid || dcache[addr.idx].dblk[1].dtag != addr.tag) && (!dcache[addr.idx].dblk[0].valid || dcache[addr.idx].dblk[0].dtag != addr.tag)) begin
+		end else if (dcif.dmemREN) begin
+			if ((!dcache[addr.idx].dblk[1].valid || dcache[addr.idx].dblk[1].dtag != addr.tag) && (!dcache[addr.idx].dblk[0].valid || dcache[addr.idx].dblk[0].dtag != addr.tag)) begin //busRd request when read is not hit
 				cif.cctrans = 1;
 			end
 		end

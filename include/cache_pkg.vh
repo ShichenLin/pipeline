@@ -44,7 +44,7 @@ typedef enum logic [4:0] {
 	SNOOPING,
 	DATA_XFER1,
 	DATA_XFER2,
-        YF
+    WAIT
 } dstate_t;
 
 endpackage

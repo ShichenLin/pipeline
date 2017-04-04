@@ -74,17 +74,17 @@ module coh_ctrl (
         end 
       end
       data_cache_xfer : begin //update from the other cache
-        if (!ccif.cctrans[req]) begin
+        if (~ccif.cctrans[req]) begin
            next_state = idle;
         end
       end
       data_ram_xfer : begin //update from RAM
-         if (!ccif.cctrans[req]) begin
-           next_state = idle;
-         end
+        if (~ccif.cctrans[req]) begin
+          next_state = idle;
+        end
       end
       default : begin
-	next_state = idle;
+        next_state = idle;
       end 
     endcase
   end
@@ -155,7 +155,7 @@ module coh_ctrl (
       snooping : begin
         ccif.ccsnoopaddr[!req] = ccif.daddr[req];
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.cctrans != 0;
+        ccif.ccwait[!req] = ccif.cctrans[req] != 0;
       end
       data_cache_xfer : begin //read from the other cache
         ccif.ramWEN = ccif.dWEN[!req];
@@ -165,7 +165,7 @@ module coh_ctrl (
         ccif.ccsnoopaddr[!req] = ccif.daddr[req];
         ccif.dwait = (ccif.ramstate != ACCESS) ? 2'b11 : 2'b00;
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.cctrans != 0;
+        ccif.ccwait[!req] = ccif.cctrans[req] != 0;
       end
       data_ram_xfer: begin //read from RAM
         ccif.dload[req] = ccif.ramload;
@@ -174,7 +174,7 @@ module coh_ctrl (
         ccif.ramaddr = ccif.daddr[req];
         ccif.dwait[req] = (ccif.ramstate != ACCESS);
         ccif.ccinv[!req] = ccif.ccwrite[req];
-        ccif.ccwait[!req] = ccif.cctrans != 0;
+        ccif.ccwait[!req] = ccif.cctrans[req] != 0;
       end
     endcase
 

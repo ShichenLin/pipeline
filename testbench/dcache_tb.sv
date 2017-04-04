@@ -18,15 +18,17 @@ module dcache_tb;
 	dcache dc (CLK, nRST, dcif, cif);
 	
 	//program
-	test PROG (CLK, dcif.dhit, dcif.flushed, cif.dREN, cif.dWEN, dcif.dmemload, cif.dstore, cif.daddr,
-			   nRST, dcif.halt, dcif.dmemREN, dcif.dmemWEN, cif.dwait, dcif.dmemaddr, dcif.dmemstore, cif.dload);
+	test PROG (CLK, dcif.dhit, dcif.flushed, cif.dREN, cif.dWEN, dcif.dmemload, cif.dstore, cif.daddr, cif.ccwrite, cif.cctrans,
+			   nRST, dcif.halt, dcif.dmemREN, dcif.dmemWEN, cif.dwait, dcif.dmemaddr, dcif.dmemstore, cif.dload, cif.ccsnoopaddr, cif.ccwait, cif.ccinv);
 endmodule
 
 program test(
 	input logic CLK, dhit, flushed, dREN, dWEN,
 		  cpu_types_pkg::word_t dmemload, dstore, daddr,
+		  logic ccwrite, cctrans,
 	output logic nRST, halt, dmemREN, dmemWEN, dwait,
-		   cpu_types_pkg::word_t dmemaddr, dmemstore, dload
+		   cpu_types_pkg::word_t dmemaddr, dmemstore, dload, ccsnoopaddr,
+		   logic ccwait, ccinv
 );
 	integer i = 0;
 	
@@ -37,12 +39,15 @@ program test(
 		dwait = 1;
 		dmemREN = 0;
 		dmemWEN = 0;
+		ccwait = 0;
+		ccinv = 0;
+		ccsnoopaddr = 32'h0;
 		dmemaddr = 32'h0;
 		dmemstore = 32'd0;
 		dload = 32'd0;
 		@(posedge CLK) nRST = 0;
 		@(posedge CLK) nRST = 1;
-		
+		/*
 		//compulsory load miss
 		@(posedge CLK) dmemREN = 1; //DCHECK_HIT
 		@(posedge CLK); //MISS1
@@ -226,6 +231,115 @@ program test(
 		end
 		@(posedge CLK) dwait = 0;
 		@(posedge CLK) dwait = 1;
+		@(negedge CLK) while(~dWEN && i < 1000) //wait for SAVE_COUNT
+		begin
+			@(posedge CLK) i++;
+		end
+		if(i == 1000)
+		begin	
+			$display("Wrong Case 6.4");
+			$finish;
+		end
+		@(negedge CLK) if(dstore != 32'd3 || daddr != 32'h3100)
+		begin	
+			$display("Wrong Case 6.5");
+			$finish;
+		end
+		@(posedge CLK) dwait = 0;
+		@(posedge CLK) dwait = 1;
+		*/
+		
+		//send busRd request
+		@(posedge CLK) dmemREN = 1;
+		@(negedge CLK) if(!cctrans || ccwrite) begin
+			$display("Failed 1");
+			$finish;
+		end
+		@(posedge CLK) dload = 32'd12;
+		dwait = 0;
+		@(posedge CLK) dload = 32'd24;
+		dwait = 0;
+		@(posedge CLK) if(cctrans || ccwrite) begin
+			$display("Failed 2");
+			$finish;
+		end
+		dmemREN = 0;
+		
+		//send busRdx request
+		@(posedge CLK) dmemWEN = 1;
+		dmemaddr = 32'h8;
+		@(negedge CLK) if(!cctrans) begin
+			$display("Failed 3");
+			$finish;
+		end
+		@(posedge CLK) dload = 32'd10;
+		dwait = 0;
+		@(posedge CLK) dload = 32'd20;
+		dwait = 0;
+		@(posedge CLK) if(cctrans || ccwrite) begin
+			$display("Failed 4");
+			$finish;
+		end
+		dmemWEN = 0;
+		
+		//receive busRd request and wb
+		@(posedge CLK) ccwait = 1;
+		@(posedge CLK);
+		@(negedge CLK) if(cctrans || !ccwrite) begin
+			$display("Failed 5");
+			$finish;
+		end
+		@(negedge CLK) if(dstore != 32'd12) begin
+			$display("Failed 6");
+			$finish;
+		end
+		dwait = 0;
+		@(negedge CLK) if(dstore != 32'd24) begin
+			$display("Failed 7");
+			$finish;
+		end
+		dwait = 0;
+		@(posedge CLK) ccwait = 0;
+		
+		//receive busRdx request and wb
+		@(posedge CLK) ccwait = 1;
+		ccinv = 1;
+		@(posedge CLK);
+		@(negedge CLK) if(cctrans || !ccwrite) begin
+			$display("Failed 8");
+			$finish;
+		end
+		@(negedge CLK) if(dstore != 32'd12) begin
+			$display("Failed 9");
+			$finish;
+		end
+		dwait = 0;
+		@(negedge CLK) if(dstore != 32'd24) begin
+			$display("Failed 10");
+			$finish;
+		end
+		dwait = 0;
+		@(posedge CLK) ccwait = 0;
+		
+		//receive busRd and have no copy
+		@(posedge CLK) ccwait = 1;
+		ccinv = 0;
+		@(posedge CLK);
+		@(negedge CLK) if(cctrans || ccwrite) begin
+			$display("Failed 11");
+			$finish;
+		end
+		@(posedge CLK) ccwait = 0;
+		
+		//receive busRdx and have no copy
+		@(posedge CLK) ccwait = 1;
+		ccinv = 0;
+		@(posedge CLK);
+		@(negedge CLK) if(cctrans || ccwrite) begin
+			$display("Failed 12");
+			$finish;
+		end
+		@(posedge CLK) ccwait = 0;
 		
 		$display("All cases pass");
 	end
