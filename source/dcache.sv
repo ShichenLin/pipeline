@@ -53,7 +53,7 @@ module dcache(
     	cif.dREN = 0;
     	cif.dWEN = 0;
    		cif.dstore = 0;
-//change the ccwrite to another block
+		//change the ccwrite to another block
     	dcif.dmemload = 0;
     	dcif.dhit = 0;
 		case (state)

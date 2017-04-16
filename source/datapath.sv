@@ -86,7 +86,8 @@ module datapath (
 	assign dpif.dmemWEN = meif.dmemWEN;
   	assign dpif.dmemstore = meif.dmemstore_next;
 	assign dpif.halt = meif.halt_next;
-
+	assign dpif.datomic = instru_me_next[31:26] == SC || instru_me_next[31:26] == LL;
+	
 	//branch_predictor
 	assign bpif.PC = pcif.imemaddr;
 	assign bpif.br = huif.br;

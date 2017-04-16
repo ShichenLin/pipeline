@@ -2,8 +2,8 @@
 
 module memory(
 	input logic CLK, nRST,
-  input word_t instru_me,
-  output word_t instru_me_next,
+	input word_t instru_me,
+	output word_t instru_me_next,
 	memory_if.me meif
 );
 

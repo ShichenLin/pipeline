@@ -133,6 +133,24 @@ module control_unit(
 				cuif.ALUOp = ALU_ADD;
 				cuif.dWEN = 1;
 			end
+			LL: begin
+				cuif.ExtOp = 1;
+				cuif.RegDst = rt;
+				cuif.RegWr = 1;
+				cuif.RegSel = 2'd3;//data load
+				cuif.ALUSrc = 2'd1;//imm;
+				cuif.ALUOp = ALU_ADD;
+				cuif.dREN = 1;
+			end
+			SC: begin
+				cuif.ExtOp = 1;
+				cuif.RegDst = rt;
+				cuif.RegWr = 1;
+				cuif.RegSel = 2'd3;//data load
+				cuif.ALUSrc = 2'd1;//imm;
+				cuif.ALUOp = ALU_ADD;
+				cuif.dWEN = 1;
+			end
 		endcase
 	end
 endmodule
