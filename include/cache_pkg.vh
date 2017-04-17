@@ -35,7 +35,6 @@ typedef enum logic [4:0] {
 	MISS_DIRTY2,
 	MISS1,
 	MISS2,
-	MISS_HIT,
 	FLUSH,
 	FLUSH1,
 	FLUSH2,

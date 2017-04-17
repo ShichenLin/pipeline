@@ -23,7 +23,6 @@ module coh_ctrl (
   // number of cpus for cc
   parameter CPUS = 2;
 
-  word_t link_reg, next_link_reg;
   logic req, next_req;
   logic ilru, next_ilru;
 
@@ -47,11 +46,9 @@ module coh_ctrl (
     if (nRST == 0) begin
       req <= 0;
       ilru <= 0;
-      link_reg <= 0;
     end else begin
       req <= next_req;
       ilru <= next_ilru;
-      link_reg <= next_link_reg;
     end
   end
   
